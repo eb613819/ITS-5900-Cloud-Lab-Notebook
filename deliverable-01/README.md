@@ -8,11 +8,11 @@ The purpose of this deliverable is to select and document the development tools 
 ## Task 1 - Select Tools
 
 ### Large Language Model (LLM)
-**Selected LLM**: ChatGPT (Free Tier)\
+**Selected LLM**: ChatGPT (Free Tier)
 **Justification**: I do not expect to use an LLM for this course, but if I do I will use ChatGPT. This is the only LLM I have experience with. If for some reason ChatGPT does not meet my needs, I will switch to the instructor recommendation (Claude).
 
 ### Programming Language
-**Selected Language**: Python\
+**Selected Language**: Python
 **Justification**: Python is widely used in cloud automation and scripting. I also taught a Python programming course last semester, so I am very familiar with it. And, this way I will be on the same page as the instructor.
 
 ### Software Development Environment
@@ -118,9 +118,9 @@ Installed the Az PowerShell module by doing the following:
   ```
 
 ### Find Allowed Resource Deployment Regions
-I found allowed resource regions by going to:\
-`Policy` -> `Assignments` -> Allowed resource deployment regions`\
-This is what it said:\
+I found allowed resource regions by going to:  
+`Policy` -> `Assignments` -> Allowed resource deployment regions`  
+This is what it said:  
 `["northcentralus","westus3","eastus2","southcentralus","mexicocentral"]`
 
 ### Create a Resource Group

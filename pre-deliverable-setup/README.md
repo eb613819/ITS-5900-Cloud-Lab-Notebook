@@ -6,7 +6,9 @@ This includes connecting via Remote Desktop and SSH, authenticating with GitHub,
 
 ## gHost Access
 **Hostname**: ITS-4900-Cloud-GNS3-015-eb613819
+
 **Private IP**: 10.110.8.15
+
 **Username**: itsvm
 
 ### Guacamole Web Interface

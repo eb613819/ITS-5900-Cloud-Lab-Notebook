@@ -197,7 +197,7 @@ virtualMachines  Standard_B2ts_v2 northcentralus       type: Location,
                                                        locations:
                                                        northcentralus
 ```
-I chose to use **Standard_B2pts_v2** because that is what the rest of the class is using.
+I chose to use **Standard_B2pts_v2** because it is available with the free tier and because it is what the rest of the class is using.
 
 ### Choose an Image
 The following command will show if Canonical is available in the region:
@@ -299,3 +299,24 @@ UbuntuServer                                 Canonical     northcentralus /…
 ```
 I will use **`Canonical:ubuntu-24_04-lts:server:latest`** because that is what the class is using, and to keep using the latest release.
 
+### The Configuration
+The following is the configuration for deploying the server:
+```powershell
+$azVmParams = @{
+    ResourceGroupName   = 'ITS-Cloud-Systems'
+    Name                = 'del01-testvm-ncus-01'
+    Credential          = (Get-Credential)
+    Location            = 'northcentralus'
+    Image               = 'Canonical:ubuntu-24_04-lts:server:latest'
+    Size                = 'Standard_B2pts_v2'
+    OpenPorts           = 22
+    PublicIpAddressName = 'del01-testvm-ncus-0101'
+}
+```
+Where 
+- **`ResourceGroupName`** must match the [Resource Group](create-a-resource-group) created earlier
+- **`Name`** is just a name I chose that stands for `deliverable01-testvm-northcentralus-01`
+- **`(Get-Credential)`** runs the PS command `Get-Credential` which prompts the user for input and then places the responses into the variable to be used later in the process
+- **`Location`** is the [location](choose-a-location) chosen earlier
+- **`Image`** is the [image](choose-an-image) chosen earlier
+-  **`Size`** is the [size](choose-a-size) chosen earlier

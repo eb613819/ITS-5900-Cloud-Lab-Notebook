@@ -37,12 +37,12 @@ The purpose of this deliverable is to select and document the development tools 
 ### Large Language Model (LLM)
 **Selected LLM**: ChatGPT (Free Tier)  
 **Justification**: I do not expect to use an LLM for this course, but if I do I will use ChatGPT. This is the LLM I have experience with and I do not want to introduce friction by switching tools when not necessary.
-<br>
+<br><br>
 
 ### Programming Language
 **Selected Language**: Python  
 **Justification**: Python is widely used in cloud automation and scripting. I also taught a Python programming course last semester, so I am very familiar with it. And, this way I will be on the same page as the instructor.
-<br>
+<br><br>
 
 ### Software Development Environment
 **Selected Environment**: Visual Studio Code (VSCode)  

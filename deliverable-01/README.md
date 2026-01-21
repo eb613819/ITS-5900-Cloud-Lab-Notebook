@@ -37,28 +37,28 @@ The purpose of this deliverable is to select and document the development tools 
 ### Large Language Model (LLM)
 **Selected LLM**: ChatGPT (Free Tier)  
 **Justification**: I do not expect to use an LLM for this course, but if I do I will use ChatGPT. This is the LLM I have experience with and I do not want to introduce friction by switching tools when not necessary.
-<br><br>
+
 
 ### Programming Language
 **Selected Language**: Python  
 **Justification**: Python is widely used in cloud automation and scripting. I also taught a Python programming course last semester, so I am very familiar with it. And, this way I will be on the same page as the instructor.
-<br><br>
+
 
 ### Software Development Environment
 **Selected Environment**: Visual Studio Code (VSCode)  
 **Justification**: VSCode supports tight integration with Azure tooling, powershell, and GitHub. Plus, using it will keep me on the same page as the instructor.
-<br><br>
+
 
 ### Development Venue
 **Selected Venue**: GNS3 gHost  
 **Justification**: The gHost is a blank slate to develop on, which will make identifying and resolving issues more straightforward. This venue also provides support from the instructor.
-<br><br>
+
 
 ### Free Azure Student Account
 **Login Info**: Azure for Students via OHIO credentials
 - $100 credit verified.
 - Azure Portal accessed.
-<br><br>
+
 
 ---
 
@@ -69,7 +69,7 @@ The purpose of this deliverable is to select and document the development tools 
   ![azure_extension](./images/Azure-Extension.png)
 - Azure Resources are visable in the extension:  
   ![azure_resources](./images/Azure-Resources.png)
-<br><br>
+
 
 ---
 
@@ -115,7 +115,7 @@ Installed PowerShell by doing the following:
   ```bash
   pwsh
   ```
-<br><br>
+
 
 ### Az Powershell Module Install
 Installed the Az PowerShell module by doing the following:
@@ -131,7 +131,7 @@ Installed the Az PowerShell module by doing the following:
   ```powershell
   Y
   ```
-<br><br>
+
 
 ### Connect to Azure
 - Connected to Azure by running:
@@ -140,7 +140,7 @@ Installed the Az PowerShell module by doing the following:
   ```
   Then signing in using the pop-up window.
 - Select the `Azure for Students` subscription
-<br><br>
+
 
 ### Changing Subscription
 - Active subscription can be checked by running:
@@ -155,21 +155,21 @@ Installed the Az PowerShell module by doing the following:
   ```powershell
   Set-AzContext -Subscription '00000000-0000-0000-0000-000000000000'
   ```
-<br><br>
+
 
 ### Find Allowed Resource Deployment Regions
 I found allowed resource regions by going to:  
 `Policy` -> `Assignments` -> `Allowed resource deployment regions`  
 This is what it said:  
 `["northcentralus","westus3","eastus2","southcentralus","mexicocentral"]`
-<br><br>
+
 
 ### Create a Resource Group
 Created a Resource Group for this class by running:
 ```powershell
 New-AzResourceGroup -Name ITS-Cloud-Systems -Location northcentralus
 ```
-<br><br>
+
 
 ### Future Use
 To reload Powershell and Login to Azure in the future:
@@ -177,7 +177,7 @@ To reload Powershell and Login to Azure in the future:
 pwsh
 Connect-AzAccount
 ```
-<br><br>
+
 
 ---
 
@@ -191,7 +191,7 @@ This command shows the available regions for the account:
 (Get-AzPolicyAssignment | 
     Where-Object {$_.DisplayName -like '*deployment*' -or $_.DisplayName -like '*Allowed resource*'}).Parameter.listOfAllowedLocations.value
 ```
-<br>
+
 And it output the following:
 ```powershell
 northcentralus
@@ -200,7 +200,7 @@ eastus2
 southcentralus
 mexicocentral
 ```
-<br>
+
 I chose to use **North Central US** because it is available for the subscription and supports required free-tier VM sizes.
 
 ### Choose a VM size
@@ -209,7 +209,7 @@ This command shows the available sizes for the region:
 Get-AzComputeResourceSku -Location 'northcentralus' |                                                  
      Where-Object { $_.ResourceType -like 'virtualMachines'}
 ```
-<br>
+
 And it output the following: 
 ```powershell
 ResourceType                 Name       Location Zones RestrictionInfo
@@ -245,16 +245,16 @@ virtualMachines  Standard_B2ts_v2 northcentralus       type: Location,
                                                        locations:
                                                        northcentralus
 ```
-<br>
+
 I chose to use **Standard_B2ats_v2** because it is available with the free tier and it supports x64 architecture.
-<br><br>
+
 
 ### Choose an Image
 The following command will show if Canonical is available in the region:
 ```powershell
 Get-AzVMImagePublisher -Location 'northcentralus' | Where-Object {$_.PublisherName -like '*Canonical*'}
 ```
-<br>
+
 And it output the following:
 ```powershell
 PublisherName  Location       Id
@@ -262,12 +262,12 @@ PublisherName  Location       Id
 Canonical      northcentralus /Subscriptions/789db197-194a-4cca-9770-b4018e…
 canonical-test northcentralus /Subscriptions/789db197-194a-4cca-9770-b4018e…
 ```
-<br>
+
 The following command will show disk images offered by Canonical:
 ```powershell
 Get-AzVMImageOffer -Location 'northcentralus' -PublisherName 'Canonical'
 ```
-<br>
+
 And it output the following:
 ```powershell
 Offer                                        PublisherName Location       Id
@@ -350,9 +350,9 @@ Ubuntu15.04SnappyDocker                      Canonical     northcentralus /…
 UbunturollingSnappy                          Canonical     northcentralus /…
 UbuntuServer                                 Canonical     northcentralus /…
 ```
-<br>
+
 I will use **`Canonical:ubuntu-24_04-lts:server:latest`** because that is what the class is using, and to keep using the latest release.
-<br><br>
+
 
 ### The Configuration
 The following is the configuration for deploying the server:
@@ -368,7 +368,7 @@ $azVmParams = @{
     PublicIpAddressName = 'del01-testvm-ncus-0101'
 }
 ```
-<br>
+
 Where 
 - **`ResourceGroupName`** must match the [Resource Group](#create-a-resource-group) created earlier
 - **`Name`** is just a name I chose that stands for `deliverable01-testvm-northcentralus-01`
@@ -383,14 +383,14 @@ Where
 -  **`Size`** is the [size](#choose-a-vm-size) chosen earlier
 -  **`OpenPorts`** is the ports to leave open
 -  **`PublicIpAddressName`** is the name of the IP Address
-<br><br>
+
 
 ### Execute the configuration
 The following command executes the [configuration](#the-configuration):
 ```powershell
 New-AzVm @azVmParams
 ```
-<br>
+
 The command will return this with the previous [configuration](#the-configuration):
 ```powershell
 ResourceGroupName        : ITS-Cloud-Systems                                 
@@ -415,7 +415,7 @@ del01-testvm-ncus-01-9721c2.northcentralus.cloudapp.azure.com
 TimeCreated              : 1/21/2026 2:39:39 PM                              
 Etag                     : "2"
 ```
-<br><br>
+
 
 ### SSH Into VM
 I SSH'd into the VM by doing the following:
@@ -437,25 +437,25 @@ I SSH'd into the VM by doing the following:
   ```bash
   itsvm@del01-testvm-ncus-01:~$
   ```
-  <br><br>
+  
   
 ### VM in VSCode Extension
 In the VSCode Azure extension, the VM should show up:  
 ![server_vm](./images/Server-Vm.png)
-<br>
+
 The VM can be manipulated via VSCode by using the `Install Extension` link under the VM:  
 ![server_vm](./images/Server-Install.png)
-<br>
+
 This is after I installed it:  
 ![server_vm](./images/Server-Installed.png)
-<br><br>
+
 
 ### Cleanup the VM
 This command cleans up the VM:
 ```powershell
 Remove-AzVM -ResourceGroupName 'ITS-Cloud-Systems' -Name 'del01-testvm-ncus-01' -Force
 ```
-<br>
+
 And will output something like:
 ```powershell
 OperationId : cfa55967-74c3-471c-8e3e-9992f3b939a5

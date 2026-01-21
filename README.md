@@ -23,8 +23,8 @@ ITS-5900-Cloud-Lab-Journal/
 - Related scripts, config files, diagrams, etc. are stored alongside the notebook.
 
 ## Environment
-- Dev Environment: GNS3 gHost
-- Code Editor: Visual Studio Code
-- Scripting Language: Python
-- Cloud Platform: Microsoft Azure
-- Version Control: GitHub
+- **Dev Environment**: GNS3 gHost
+- **Code Editor**: Visual Studio Code
+- **Scripting Language**: Python
+- **Cloud Platform**: Microsoft Azure
+- **Version Control**: GitHub

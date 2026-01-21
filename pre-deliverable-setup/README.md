@@ -3,6 +3,7 @@
 ## Objective
 Establish access to the gHost environment and configure it for use.
 This includes connecting via Remote Desktop and SSH, authenticating with GitHub, and preparing VSCode.
+---
 
 ## gHost Access
 **Hostname**: ITS-4900-Cloud-GNS3-015-eb613819
@@ -45,6 +46,7 @@ Attempted to connect via SSH using a jumphost:
 ssh -J eb613819@<jumphost_ip> itsvm@10.110.8.15
 ```
 **Note** My credentials did not work on the jumphost. I will be reaching out to Brandon, but probably will not be using this method anyway.
+---
 
 ## GitHub
 
@@ -72,6 +74,7 @@ I attempted to authenticate on the gHost by following these steps (**Note**: I d
    ```bash
    gh repo view OHIO-ECT/Lab-Notebook-Cheat-Sheet
    ```
+---
 
 ## VSCode
 - Launched VSCode on the gHost

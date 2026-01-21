@@ -11,8 +11,9 @@ This includes connecting via Remote Desktop and SSH, authenticating with GitHub,
 **Private IP**: `10.110.8.15`\
 **Username**: `itsvm`
 
-### Guacamole Web Interface
 **Note**: Do not shut down the gHost.
+
+### Guacamole Web Interface
 
 #### GUI Connection
 Connected to the gHost using Guacamole by following these steps:

@@ -119,7 +119,7 @@ Installed the Az PowerShell module by doing the following:
 
 ### Find Allowed Resource Deployment Regions
 I found allowed resource regions by going to:  
-`Policy` -> `Assignments` -> Allowed resource deployment regions`  
+`Policy` -> `Assignments` -> `Allowed resource deployment regions`  
 This is what it said:  
 `["northcentralus","westus3","eastus2","southcentralus","mexicocentral"]`
 

@@ -23,5 +23,6 @@ ITS-5900-Cloud-Lab-Journal/
 ## Environment
 - Dev Environment: GNS3 gHost
 - Code Editor: Visual Studio Code
+- Scripting Language: Python
 - Cloud Platform: Microsoft Azure
 - Version Control: GitHub

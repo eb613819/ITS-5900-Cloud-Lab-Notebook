@@ -23,6 +23,16 @@ The purpose of this deliverable is to select and document the development tools 
 **Selected Venue**: GNS3 gHost
 **Justification**: The gHost is a blank slate to develop on, which will make identifying and resolving issues more straightforward. This venue also provides support from the instructor.
 
+### Free Azure Student Account
+**Login Info**: OHIO Credentials (eb613819@ohio.edu)
+- [x] $100 credit verified.
+- [x] Azure Portal accessed.
+
 ---
 
 ## Task 2 - VSCode Development Environment Setup
+- Installed the `Azure App Service` extension in VSCode by following unit 3 of [this guide](https://learn.microsoft.com/en-us/training/modules/prepare-your-dev-environment-for-azure-development/3-exercise-set-up-dev-environment?pivots=vscode).
+- Signed in to Azure by clicking the `A` icon in the left toolbar -> `Sign in toAzure...`.
+  ![azure_extension](./images/Azure-Extension.png)
+- Azure Resources are visable in the extension:
+  ![azure_resources](./images/Azure-Resources.png)

@@ -197,7 +197,7 @@ virtualMachines  Standard_B2ts_v2 northcentralus       type: Location,
                                                        locations:
                                                        northcentralus
 ```
-I chose to use **Standard_B2pts_v2** because it is available with the free tier and because it is what the rest of the class is using.
+I chose to use **Standard_B2ats_v2** because it is available with the free tier and it supports x64 architecture.
 
 ### Choose an Image
 The following command will show if Canonical is available in the region:
@@ -308,7 +308,7 @@ $azVmParams = @{
     Credential          = (Get-Credential)
     Location            = 'northcentralus'
     Image               = 'Canonical:ubuntu-24_04-lts:server:latest'
-    Size                = 'Standard_B2pts_v2'
+    Size                = 'Standard_B2ats_v2'
     OpenPorts           = 22
     PublicIpAddressName = 'del01-testvm-ncus-0101'
 }
@@ -316,7 +316,23 @@ $azVmParams = @{
 Where 
 - **`ResourceGroupName`** must match the [Resource Group](#create-a-resource-group) created earlier
 - **`Name`** is just a name I chose that stands for `deliverable01-testvm-northcentralus-01`
-- **`(Get-Credential)`** runs the PS command `Get-Credential` which prompts the user for input and then places the responses into the variable to be used later in the process
-- **`Location`** is the [location](#choose-a-region) chosen earlier
+- **`(Get-Credential)`** runs the PS command `Get-Credential` which prompts the user for input and then places the responses into the variable to be used later in the process. **Note**: the password must satisfy the following
+  ```powershell
+  New-AzVM: The supplied password must be between 6-72 characters long and must satisfy at least 3 of password complexity requirements from the following:
+1) Contains an uppercase character                                           
+2) Contains a lowercase character                                            
+3) Contains a numeric digit                                                  
+4) Contains a special character                                              
+5) Control characters are not allowed
+```
+- **`Location`** is the [region](#choose-a-region) chosen earlier
 - **`Image`** is the [image](#choose-an-image) chosen earlier
 -  **`Size`** is the [size](#choose-a-vm-size) chosen earlier
+-  **`OpenPorts`** is the ports to leave open
+-  **`PublicIpAddressName`** is the name of the IP Address
+
+### Execute the configuration
+The following command executes the [configuration](#the-configuration):
+```powershell
+New-AzVm @azVmParams
+```

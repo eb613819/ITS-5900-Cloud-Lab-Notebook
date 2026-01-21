@@ -74,11 +74,9 @@ The purpose of this deliverable is to select and document the development tools 
 ### PowerShell Install
 Installed PowerShell by doing the following:
 - Update `apt-get`:
-  
   ```bash
   sudo apt-get update
   ```
-  
 - Install prerequisite packages:
   ```bash
   sudo apt-get install -y wget apt-transport-https software-properties-common

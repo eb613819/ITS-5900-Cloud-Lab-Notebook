@@ -316,15 +316,12 @@ $azVmParams = @{
 Where 
 - **`ResourceGroupName`** must match the [Resource Group](#create-a-resource-group) created earlier
 - **`Name`** is just a name I chose that stands for `deliverable01-testvm-northcentralus-01`
-- **`(Get-Credential)`** runs the PS command `Get-Credential` which prompts the user for input and then places the responses into the variable to be used later in the process. **Note**: the password must satisfy the following
-  ```powershell
-  New-AzVM: The supplied password must be between 6-72 characters long and must satisfy at least 3 of password complexity requirements from the following:
+- **`(Get-Credential)`** runs the PS command `Get-Credential` which prompts the user for input and then places the responses into the variable to be used later in the process. **Note**: the password must be between 6-72 characters long and must satisfy at least 3 of password complexity requirements from the following:
 1) Contains an uppercase character                                           
 2) Contains a lowercase character                                            
 3) Contains a numeric digit                                                  
 4) Contains a special character                                              
 5) Control characters are not allowed
-```
 - **`Location`** is the [region](#choose-a-region) chosen earlier
 - **`Image`** is the [image](#choose-an-image) chosen earlier
 -  **`Size`** is the [size](#choose-a-vm-size) chosen earlier

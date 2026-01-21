@@ -333,3 +333,49 @@ The following command executes the [configuration](#the-configuration):
 ```powershell
 New-AzVm @azVmParams
 ```
+The command will return this with the previous [configuration](#the-configuration):
+```powershell
+ResourceGroupName        : ITS-Cloud-Systems                                 
+Id                       : /subscriptions/789db197-194a-4cca-9770-b4018ed723 
+a8/resourceGroups/ITS-Cloud-Systems/providers/Microsoft.Compute/virtualMachi 
+nes/del01-testvm-ncus-01                                                     
+VmId                     : 47ad1ff7-3c9b-4a65-8de2-fb6cd4c4e065              
+Name                     : del01-testvm-ncus-01                              
+Type                     : Microsoft.Compute/virtualMachines                 
+Location                 : northcentralus                                    
+Tags                     : {}                                                
+HardwareProfile          : {VmSize}                                          
+NetworkProfile           : {NetworkInterfaces}                               
+OSProfile                : {ComputerName, AdminUsername,                     
+LinuxConfiguration, Secrets, AllowExtensionOperations,                       
+RequireGuestProvisionSignal}                                                 
+ProvisioningState        : Succeeded                                         
+StorageProfile           : {ImageReference, OsDisk, DataDisks,               
+DiskControllerType, AlignRegionalDisksToVMZone}                              
+FullyQualifiedDomainName :                                                   
+del01-testvm-ncus-01-9721c2.northcentralus.cloudapp.azure.com                
+TimeCreated              : 1/21/2026 2:39:39 PM                              
+Etag                     : "2"
+```
+
+### SSH Into VM
+I SSH'd into the VM by doing the following:
+- Get the IP address using the `PublicIpAddressName` from the [configuration](#the-configuration):
+  ```powershell
+  Get-AzPublicIpAddress -ResourceGroupName 'ITS-Cloud-Systems' -Name 'del01-testvm-ncus-0101'
+  ```
+  Which returns:
+  ```powershell
+  ResourceGroupName Name                   Location       PublicIpAllocationMethod IpAddress      PublicIpAddressVersion IdleTimeoutInMinutes Provisioni
+                                                                                                                                            ngState
+----------------- ----                   --------       ------------------------ ---------      ---------------------- -------------------- ----------
+ITS-Cloud-Systems del01-testvm-ncus-0101 northcentralus Static                   172.183.87.166 IPv4                   4                    Succeeded 
+  ```
+- SSH into the machine using the credentials from [running the configuration](#execute-the-configuration):
+```powershell
+ssh its@172.183.87.166
+```
+- If successful the VM bash will show:
+  ```bash
+  itsvm@del01-testvm-ncus-01:~$
+  ```

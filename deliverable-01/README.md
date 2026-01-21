@@ -26,6 +26,7 @@ The purpose of this deliverable is to select and document the development tools 
   - [The Configuration](#the-configuration)
   - [Execute the Configuration](#execute-the-configuration)
   - [SSH Into VM](#ssh-into-vm)
+  - [VM in VSCode Extension](#vm-in-vscode-extension)
   - [Cleanup the VM](#cleanup-the-vm)
  
 ---

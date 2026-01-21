@@ -70,4 +70,7 @@ I attempted to authenticate on the gHost by following these steps (**Note**: I d
    ```bash
    gh repo view OHIO-ECT/Lab-Notebook-Cheat-Sheet
    ```
-   
+
+## VSCode
+- Launched VSCode on the gHost
+- Pinned VSCode to the start bar

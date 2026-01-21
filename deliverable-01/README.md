@@ -7,7 +7,7 @@ The purpose of this deliverable is to select and document the development tools 
 
 ## Table of Contents
 - [Objective](#objective)
-- [Task 1 – Select Tools](#task-1-select-tools)
+- [Task 1 – Select Tools](#task---1-select-tools)
   - [Large Language Model (LLM)](#large-language-model-llm)
   - [Programming Language](#programming-language)
   - [Software Development Environment](#software-development-environment)

@@ -83,42 +83,34 @@ Installed PowerShell by doing the following:
   ```bash
   sudo apt-get update
   ```
-<br>
 - Install prerequisite packages:
   ```bash
   sudo apt-get install -y wget apt-transport-https software-properties-common
   ```
-<br>
 - Set Ubuntu `$VERSION_ID` variable:
   ```bash
   source /etc/os-release
   ```
-<br>
 - Download the Microsoft repository keys:
   ```bash
   wget -q https://packages.microsoft.com/config/ubuntu/$VERSION_ID/packages-microsoft-prod.deb
   ```
-<br>
 - Register the Microsoft repository keys:
   ```bash
   sudo dpkg -i packages-microsoft-prod.deb
   ```
-<br>
 - Delete the Microsoft repository keys file:
   ```bash
   rm packages-microsoft-prod.deb
   ```
-<br>
 - Update the list of packages after adding the Microsoft repository:
   ```bash
   sudo apt-get update
   ```
-<br>
 - Install PowerShell:
   ```bash
   sudo apt-get install -y powershell
   ```
-<br>
 - Start PowerShell:
   ```bash
   pwsh
@@ -131,12 +123,10 @@ Installed the Az PowerShell module by doing the following:
   ```bash
   pwsh
   ```
-<br>
 - Install the Az PowerShell Module:
   ```powershell
   Install-Module -Name Az -Scope CurrentUser -Repository PSGallery
   ```
-<br>
 - Confirm it's ok to install from an untrusted repository:
   ```powershell
   Y
@@ -433,19 +423,16 @@ I SSH'd into the VM by doing the following:
   ```powershell
   Get-AzPublicIpAddress -ResourceGroupName 'ITS-Cloud-Systems' -Name 'del01-testvm-ncus-0101'
   ```
-  <br>
   Which returns:
   ```powershell
   ResourceGroupName Name                   Location       PublicIpAllocationMethod IpAddress      PublicIpAddressVersion IdleTimeoutInMinutes ProvisioningState
   ----------------- ----                   --------       ------------------------ ---------      ---------------------- -------------------- ----------
   ITS-Cloud-Systems del01-testvm-ncus-0101 northcentralus Static                   172.183.87.166 IPv4                   4                    Succeeded 
   ```
-  <br>
 - SSH into the machine using the credentials from [running the configuration](#execute-the-configuration):
   ```powershell
   ssh its@172.183.87.166
   ```
-  <br>
 - If successful the VM bash will show:
   ```bash
   itsvm@del01-testvm-ncus-01:~$

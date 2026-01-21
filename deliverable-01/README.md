@@ -378,3 +378,19 @@ ssh its@172.183.87.166
   ```bash
   itsvm@del01-testvm-ncus-01:~$
   ```
+
+### VM in VSCode Extension
+In the VSCode Azure extension, the VM should show up:
+![server_vm](./images/Server-Vm.png)
+
+The VM can be manipulated via VSCode by using the `Install Extension` link under the VM:
+![server_vm](./images/Server-Install.png)
+
+This is after I installed it:
+![server_vm](./images/Server-Installed.png)
+
+### Cleanup the VM
+This command cleans up the VM:
+```powershell
+Remove-AzVM -ResourceGroupName 'ITS-Cloud-Systems' -Name 'del01-testvm-ncus-01' -Force
+```

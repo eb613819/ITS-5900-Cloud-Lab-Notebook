@@ -314,9 +314,9 @@ $azVmParams = @{
 }
 ```
 Where 
-- **`ResourceGroupName`** must match the [Resource Group](create-a-resource-group) created earlier
+- **`ResourceGroupName`** must match the [Resource Group](#create-a-resource-group) created earlier
 - **`Name`** is just a name I chose that stands for `deliverable01-testvm-northcentralus-01`
 - **`(Get-Credential)`** runs the PS command `Get-Credential` which prompts the user for input and then places the responses into the variable to be used later in the process
-- **`Location`** is the [location](choose-a-location) chosen earlier
-- **`Image`** is the [image](choose-an-image) chosen earlier
--  **`Size`** is the [size](choose-a-size) chosen earlier
+- **`Location`** is the [location](#choose-a-location) chosen earlier
+- **`Image`** is the [image](#choose-an-image) chosen earlier
+-  **`Size`** is the [size](#choose-a-size) chosen earlier

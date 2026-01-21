@@ -18,12 +18,12 @@ This includes connecting via Remote Desktop and SSH, authenticating with GitHub,
 Connected to the gHost using Guacamole by following these steps:
 1. Go to `https://rm.its.ohio.edu/`
 2. Allow Guacamole to use the clipboard (pop-up if on Chrome)
-   ![pop_up](./images/Guac-Browser-Clipboard-Access)
+   ![pop_up](./images/Guac-Browser-Clipboard-Access.png)
 4. Login to OHIO account
 5. Click `Class and Labs` -> `ITS-4900-Cloud` -> `ITS-4900-Cloud-GNS3-015-eb613819`
-   ![main_page](./images/Guac-Main-Page)
+   ![main_page](./images/Guac-Main-Page.png)
 7. If successful, this appears:
-   ![main_page](./images/Guac-Home)
+   ![main_page](./images/Guac-Home.png)
 
 #### CLI Connection
 Going to `Class and Labs` -> `ITS-4900-Cloud` -> `ITS-4900-Cloud-SSH` -> `ITS-4900-Cloud-GNS3-015-eb613819-SSH` will open a CLI (SSH) interface.
@@ -36,7 +36,7 @@ Connected to the gHost using Remote Desktop by following these steps:
 1. Open `Remote Desktop Connection`
 2. Configure RD Gateway in `Show Options` -> `Advanced` -> `Connect from anywhere` -> `Settings`
 3. Use these inputs (After configuring the RD Gateway):
-![remote-desktop](./images/Remote-Desktop)
+![remote-desktop](./images/Remote-Desktop.png)
 4. It will then prompt for a password.
 
 ### SSH

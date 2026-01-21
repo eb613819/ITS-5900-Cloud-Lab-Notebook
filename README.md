@@ -9,9 +9,11 @@ Each lab/deliverable is documented in its own directory using Markdown files tha
 ITS-5900-Cloud-Lab-Journal/
 ├── README.md
 ├── pre-deliverable-setup/
-│   └── README.md
+│   ├── README.md
+│   └── /images
 ├── deliverable-01/
-│   └── README.md
+│   ├── README.md
+│   └── /images
 └── .gitignore
 ```
 

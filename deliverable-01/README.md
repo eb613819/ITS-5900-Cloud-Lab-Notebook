@@ -2,7 +2,6 @@
 
 ## Objective
 The purpose of this deliverable is to select and document the development tools used for this course, configure the Azure development environment on the gHost, and deploy a basic virtual server using Azure CLI.
-/
 
 ---
 
@@ -29,8 +28,6 @@ The purpose of this deliverable is to select and document the development tools 
 - $100 credit verified.
 - Azure Portal accessed.
 
-***
-
 ---
 
 ## Task 2 - VSCode Development Environment Setup
@@ -39,3 +36,46 @@ The purpose of this deliverable is to select and document the development tools 
   ![azure_extension](./images/Azure-Extension.png)
 - Azure Resources are visable in the extension:
   ![azure_resources](./images/Azure-Resources.png)
+
+---
+
+## Task 3 - Setup Powershell
+**Note**: the gHost is running Ubuntu\
+Installed PowerShell by doing the following:
+- Update `apt-get`:
+  ```bash
+  sudo apt-get update
+  ```
+- Install prerequisite packages:
+  ```bash
+  sudo apt-get install -y wget apt-transport-https software-properties-common
+  ```
+- Set Ubuntu `$VERSION_ID` variable:
+  ```bash
+  source /etc/os-release
+  ```
+- Download the Microsoft repository keys:
+  ```bash
+  wget -q https://packages.microsoft.com/config/ubuntu/$VERSION_ID/packages-microsoft-prod.deb
+  ```
+- Register the Microsoft repository keys:
+  ```bash
+  sudo dpkg -i packages-microsoft-prod.deb
+  ```
+- Delete the Microsoft repository keys file:
+  ```bash
+  rm packages-microsoft-prod.deb
+  ```
+- Update the list of packages after adding the Microsoft repository:
+  ```bash
+  sudo apt-get update
+  ```
+- Install PowerShell:
+  ```bash
+  sudo apt-get install -y powershell
+  ```
+- Start PowerShell:
+  ```bash
+  pwsh
+  ```
+Installed the Az PowerShell module by doing the following:

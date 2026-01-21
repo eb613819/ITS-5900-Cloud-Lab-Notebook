@@ -41,6 +41,8 @@ The purpose of this deliverable is to select and document the development tools 
 
 ## Task 3 - Setup Powershell
 **Note**: the gHost is running Ubuntu\
+
+### PowerShell Install
 Installed PowerShell by doing the following:
 - Update `apt-get`:
   ```bash
@@ -78,4 +80,59 @@ Installed PowerShell by doing the following:
   ```bash
   pwsh
   ```
+### Az Powershell Module Install
 Installed the Az PowerShell module by doing the following:
+- Launch PowerShell:
+  ```bash
+  pwsh
+  ```
+- Install the Az PowerShell Module:
+  ```powershell
+  Install-Module -Name Az -Scope CurrentUser -Repository PSGallery
+  ```
+- Confirm it's ok to install from an untrusted repository:
+  ```bash
+  Y
+  ```
+
+### Connect to Azure
+- Connected to Azure by running:
+  ```bash
+  Connect-AzAccount
+  ```
+  Then signing in using the pop-up window.
+- Select the `Azure for Students` subscription
+
+### Changing Subscription
+- Active subscription can be checked by running:
+  ```bash
+  Get-AzContext
+  ```
+- A list of subscriptions can be shown by running (this will show Subscription ID):
+  ```bash
+  Get-AzSubscription
+  ```
+- The active subscription can be changed by running:
+  ```bash
+  Set-AzContext -Subscription '00000000-0000-0000-0000-000000000000'
+  ```
+
+### Find Allowed Resource Deployment Regions
+I found allowed resource regions by going to:\
+`Policy` -> `Assignments` -> Allowed resource deployment regions`\
+This is what it said:\
+`["northcentralus","westus3","eastus2","southcentralus","mexicocentral"]`
+
+### Create a Resource Group
+Created a Resource Group for this class by running:
+```bash
+New-AzResourceGroup -Name ITS-Cloud-Systems -Location eastus2
+```
+
+### Future Use
+To reload Powershell and Login to Azure in the future:
+```bash
+pwsh
+Connect-AzAccount
+```
+  

@@ -366,9 +366,7 @@ I SSH'd into the VM by doing the following:
   ```
   Which returns:
   ```powershell
-  ResourceGroupName Name                   Location       PublicIpAllocationMethod IpAddress      PublicIpAddressVersion IdleTimeoutInMinutes Provisioni
-                                                                                                                                            ngState
------------------ ----                   --------       ------------------------ ---------      ---------------------- -------------------- ----------
+  ResourceGroupName Name                   Location       PublicIpAllocationMethod IpAddress      PublicIpAddressVersion IdleTimeoutInMinutes ProvisioningState----------------- ----                   --------       ------------------------ ---------      ---------------------- -------------------- ----------
 ITS-Cloud-Systems del01-testvm-ncus-0101 northcentralus Static                   172.183.87.166 IPv4                   4                    Succeeded 
   ```
 - SSH into the machine using the credentials from [running the configuration](#execute-the-configuration):

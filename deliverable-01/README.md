@@ -13,13 +13,13 @@ The purpose of this deliverable is to select and document the development tools 
   - [Software Development Environment](#software-development-environment)
   - [Development Venue](#development-venue)
   - [Free Azure Student Account](#free-azure-student-account)
-- [Task 2 – VSCode Development Environment Setup](#task-2-vscode-development-environment-setup)
-- [Task 3 – Setup PowerShell](#task-3-setup-powershell)
+- [Task 2 – VSCode Development Environment Setup](#task-2)
+- [Task 3 – Setup PowerShell](#task-3)
   - [PowerShell Install](#powershell-install)
   - [Az PowerShell Module Install](#az-powershell-module-install)
   - [Connect to Azure](#connect-to-azure)
   - [Create a Resource Group](#create-a-resource-group)
-- [Task 4 – Deploy a Virtual Server](#task-4-deploy-a-virtual-server)
+- [Task 4 – Deploy a Virtual Server](#task-4)
   - [Choose a Region](#choose-a-region)
   - [Choose a VM Size](#choose-a-vm-size)
   - [Choose an Image](#choose-an-image)
@@ -56,6 +56,7 @@ The purpose of this deliverable is to select and document the development tools 
 
 ---
 
+<a id="task-2"></a>
 ## Task 2 - VSCode Development Environment Setup
 - Installed the `Azure App Service` extension in VSCode by following unit 3 of [this guide](https://learn.microsoft.com/en-us/training/modules/prepare-your-dev-environment-for-azure-development/3-exercise-set-up-dev-environment?pivots=vscode).
 - Signed in to Azure by clicking the `A` icon in the left toolbar -> `Sign in toAzure...`.  
@@ -65,6 +66,7 @@ The purpose of this deliverable is to select and document the development tools 
 
 ---
 
+<a id="task-3"></a>
 ## Task 3 - Setup Powershell
 **Note**: the gHost is running Ubuntu
 
@@ -163,6 +165,7 @@ Connect-AzAccount
 ```
 ---
 
+<a id="task-4"></a>
 ## Task 4 - Deploy a Virtual Server
 I used these steps to deploy a virtual server
 

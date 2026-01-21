@@ -40,7 +40,7 @@ The purpose of this deliverable is to select and document the development tools 
 ---
 
 ## Task 3 - Setup Powershell
-**Note**: the gHost is running Ubuntu\
+**Note**: the gHost is running Ubuntu
 
 ### PowerShell Install
 Installed PowerShell by doing the following:

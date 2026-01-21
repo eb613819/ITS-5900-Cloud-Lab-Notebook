@@ -135,4 +135,6 @@ To reload Powershell and Login to Azure in the future:
 pwsh
 Connect-AzAccount
 ```
-  
+---
+
+## Task 4 - Deploy a Virtual Server

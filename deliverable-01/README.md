@@ -5,11 +5,36 @@ The purpose of this deliverable is to select and document the development tools 
 
 ---
 
+## Table of Contents
+- [Objective](#objective)
+- [Task 1 – Select Tools](#task-1--select-tools)
+  - [Large Language Model (LLM)](#large-language-model-llm)
+  - [Programming Language](#programming-language)
+  - [Software Development Environment](#software-development-environment)
+  - [Development Venue](#development-venue)
+  - [Free Azure Student Account](#free-azure-student-account)
+- [Task 2 – VSCode Development Environment Setup](#task-2--vscode-development-environment-setup)
+- [Task 3 – Setup PowerShell](#task-3--setup-powershell)
+  - [PowerShell Install](#powershell-install)
+  - [Az PowerShell Module Install](#az-powershell-module-install)
+  - [Connect to Azure](#connect-to-azure)
+  - [Create a Resource Group](#create-a-resource-group)
+- [Task 4 – Deploy a Virtual Server](#task-4--deploy-a-virtual-server)
+  - [Choose a Region](#choose-a-region)
+  - [Choose a VM Size](#choose-a-vm-size)
+  - [Choose an Image](#choose-an-image)
+  - [The Configuration](#the-configuration)
+  - [Execute the Configuration](#execute-the-configuration)
+  - [SSH Into VM](#ssh-into-vm)
+  - [Cleanup the VM](#cleanup-the-vm)
+ 
+---
+
 ## Task 1 - Select Tools
 
 ### Large Language Model (LLM)
 **Selected LLM**: ChatGPT (Free Tier)  
-**Justification**: I do not expect to use an LLM for this course, but if I do I will use ChatGPT. This is the only LLM I have experience with. If for some reason ChatGPT does not meet my needs, I will switch to the instructor recommendation (Claude).
+**Justification**: I do not expect to use an LLM for this course, but if I do I will use ChatGPT. This is the LLM I have experience with and I do not want to introduce friction by switching tools when not necessary.
 
 ### Programming Language
 **Selected Language**: Python  
@@ -24,7 +49,7 @@ The purpose of this deliverable is to select and document the development tools 
 **Justification**: The gHost is a blank slate to develop on, which will make identifying and resolving issues more straightforward. This venue also provides support from the instructor.
 
 ### Free Azure Student Account
-**Login Info**: OHIO Credentials (eb613819@ohio.edu)
+**Login Info**: Azure for Students via OHIO credentials
 - $100 credit verified.
 - Azure Portal accessed.
 
@@ -126,7 +151,7 @@ This is what it said:
 ### Create a Resource Group
 Created a Resource Group for this class by running:
 ```powershell
-New-AzResourceGroup -Name ITS-Cloud-Systems -Location eastus2
+New-AzResourceGroup -Name ITS-Cloud-Systems -Location northcentralus
 ```
 
 ### Future Use
@@ -154,7 +179,7 @@ eastus2
 southcentralus
 mexicocentral
 ```
-I chose to use **North Central US**.
+I chose to use **North Central US** because it is available for the subscription and supports required free-tier VM sizes.
 
 ### Choose a VM size
 This command shows the available sizes for the region:

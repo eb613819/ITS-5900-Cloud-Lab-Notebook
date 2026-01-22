@@ -28,7 +28,7 @@ The purpose of this deliverable is to select and document the development tools 
   - [SSH Into VM](#ssh-into-vm)
   - [VM in VSCode Extension](#vm-in-vscode-extension)
   - [Cleanup the VM](#cleanup-the-vm)
-  - [Problems Deployinh](#problems-deploying)
+  - [Problems Deploying](#problems-deploying)
  
 ---
 

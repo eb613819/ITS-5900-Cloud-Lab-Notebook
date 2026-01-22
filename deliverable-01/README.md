@@ -28,6 +28,7 @@ The purpose of this deliverable is to select and document the development tools 
   - [SSH Into VM](#ssh-into-vm)
   - [VM in VSCode Extension](#vm-in-vscode-extension)
   - [Cleanup the VM](#cleanup-the-vm)
+  - [Problems Deployinh](#problems-deploying)
  
 ---
 
@@ -463,4 +464,10 @@ Status      : Succeeded
 StartTime   : 1/21/2026 10:10:04 AM
 EndTime     : 1/21/2026 10:10:45 AM
 Error       :
+```
+
+### Problems Deploying
+When I attempted to deply the image **`Canonical:ubuntu-24_04-lts:server:latest`** on size **`Standard_B2pts_v2`**, I encountered this architecture mismatch error:
+```powershell
+New-AzVM: Cannot create a VM of size 'Standard_B2pts_v2' because this VM size only supports a CPU Architecture of 'Arm64', but an image or disk with CPU Architecture 'x64' was given. Please check that the CPU Architecture of the image or disk is compatible with that of the VM size.
 ```

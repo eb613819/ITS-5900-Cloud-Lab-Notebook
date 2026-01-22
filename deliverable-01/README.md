@@ -471,3 +471,4 @@ When I attempted to deply the image **`Canonical:ubuntu-24_04-lts:server:latest`
 ```powershell
 New-AzVM: Cannot create a VM of size 'Standard_B2pts_v2' because this VM size only supports a CPU Architecture of 'Arm64', but an image or disk with CPU Architecture 'x64' was given. Please check that the CPU Architecture of the image or disk is compatible with that of the VM size.
 ```
+My solution was to use size **`Standard_B2ats_v2`** instead.

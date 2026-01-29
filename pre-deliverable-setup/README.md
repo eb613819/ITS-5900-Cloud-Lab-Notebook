@@ -57,7 +57,7 @@ I have a previously existing account:
 This account has been emailed to Professor Brandon Saunders.
 
 ### Authentication
-I attempted to authenticate on the gHost by following these steps (**Note**: I do not know the keyring password):
+I was able to authenticate on the gHost by following these steps (after getting the keyring password from Brandon):
 1. Install the CLI tool:
    ```bash
    sudo apt install -y gh

@@ -471,4 +471,5 @@ When I attempted to deply the image **`Canonical:ubuntu-24_04-lts:server:latest`
 ```powershell
 New-AzVM: Cannot create a VM of size 'Standard_B2pts_v2' because this VM size only supports a CPU Architecture of 'Arm64', but an image or disk with CPU Architecture 'x64' was given. Please check that the CPU Architecture of the image or disk is compatible with that of the VM size.
 ```
+[Here](https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/overview?tabs=breakdownseries%2Cgeneralsizelist%2Ccomputesizelist%2Cmemorysizelist%2Cstoragesizelist%2Cgpusizelist%2Cfpgasizelist%2Chpcsizelist) it shows that the `p` in `Standard_B2pts_v2` means its an ARM based CPU, while an `a` means its an AMD CPU.
 My solution was to use size **`Standard_B2ats_v2`** instead.

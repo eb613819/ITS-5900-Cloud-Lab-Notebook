@@ -95,8 +95,8 @@ foreach ($region in $allowedRegions) {
         # Add SKU to results
         if ($DebugMode) { Write-Host "Adding SKU $($sku.Name) to results." }
         $results += [pscustomobject]@{
-            SKU    = $sku.Name
-            Region = $region
+            Name    = $sku.Name
+            Location = $region
             Zones  = if ($allowedZones.Count -gt 0) { $allowedZones -join "," } else { "" }
         }
     }

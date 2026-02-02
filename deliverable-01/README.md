@@ -29,7 +29,8 @@ The purpose of this deliverable is to select and document the development tools 
   - [VM in VSCode Extension](#vm-in-vscode-extension)
   - [Cleanup the VM](#cleanup-the-vm)
   - [Problems Deploying](#problems-deploying)
- 
+- [SKU-Region Script](#sku-region-script)
+
 ---
 
 <a id="task-1"></a>
@@ -473,3 +474,5 @@ New-AzVM: Cannot create a VM of size 'Standard_B2pts_v2' because this VM size on
 ```
 [Here](https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/overview?tabs=breakdownseries%2Cgeneralsizelist%2Ccomputesizelist%2Cmemorysizelist%2Cstoragesizelist%2Cgpusizelist%2Cfpgasizelist%2Chpcsizelist) it shows that the `p` in `Standard_B2pts_v2` means its an ARM based CPU, while an `a` means its an AMD CPU.
 My solution was to use size **`Standard_B2ats_v2`** instead.
+
+## SKU-Region Script

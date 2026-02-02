@@ -42,8 +42,8 @@ The purpose of this deliverable is to select and document the development tools 
 
 
 ### Programming Language
-**Selected Language**: Python  
-**Justification**: Python is widely used in cloud automation and scripting. I also taught a Python programming course last semester, so I am very familiar with it. And, this way I will be on the same page as the instructor.
+**Selected Language**: Python and PowerShell  
+**Justification**: Python will be used for data processing and orchestration. I have taught a Python programming course, so I am very familiar with it. And, this way I will be on the same page as the instructor. PowerShell will be used for interacting directly with Azure, since it has native support and tight integration with Azure services.
 
 
 ### Software Development Environment

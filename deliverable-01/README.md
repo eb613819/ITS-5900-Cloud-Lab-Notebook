@@ -206,12 +206,17 @@ mexicocentral
 I chose to use **North Central US** because it is available for the subscription and supports required free-tier VM sizes.
 
 ### Choose a VM size
-This command shows the available sizes for the region:
+This command shows all sizes for the region:
 ```powershell
 Get-AzComputeResourceSku -Location 'northcentralus' |                                                  
      Where-Object { $_.ResourceType -like 'virtualMachines'}
 ```
-
+The list this returns is very long. We will be using the `Standard_B` size for this class, so I used this command instead:
+```powershell
+Get-AzComputeResourceSku -Location 'northcentralus' |                                                  
+     Where-Object {$_.Name -like 'Standard_B[12][a-z]*'} |
+     Format-Table -Wrap -AutoSize
+```
 And it output the following: 
 ```powershell
 ResourceType                 Name       Location Zones RestrictionInfo

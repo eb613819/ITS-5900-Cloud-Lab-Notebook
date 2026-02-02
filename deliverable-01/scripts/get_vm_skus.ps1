@@ -1,5 +1,5 @@
 # Toggle debug prints
-$DebugMode = $true
+$DebugMode = $false
 
 # Get all allowed regions for the user
 $allowedRegions = (
@@ -110,3 +110,4 @@ foreach ($region in $allowedRegions) {
 }
 
 if ($DebugMode) { Write-Host "Results: " $results }
+$results | ConvertTo-Json -Depth 4

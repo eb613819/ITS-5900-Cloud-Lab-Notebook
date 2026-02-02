@@ -1,4 +1,7 @@
-#Get all allowed regions for the user
+# Toggle debug prints
+$DebugMode = $true
+
+# Get all allowed regions for the user
 $allowedRegions = (
   Get-AzPolicyAssignment | 
   Where-Object {
@@ -8,10 +11,7 @@ $allowedRegions = (
 ).Parameter.listOfAllowedLocations.value
 
 
-# Toggle debug prints
-$DebugMode = $true   # set to $false to silence debug output
-
-$results = @()
+$results = @() # Variable for the final SKU list
 
 foreach ($region in $allowedRegions) {
     if ($DebugMode) { Write-Host "`nChecking region: $region" }
@@ -19,20 +19,23 @@ foreach ($region in $allowedRegions) {
     # Get all Standard_B[12]* SKUs for this region
     $skus = Get-AzComputeResourceSku -Location $region |
         Where-Object { $_.Name -like 'Standard_B[12][a-z]*' }
-
+        
     if ($DebugMode) { Write-Host "Found SKUs:" ($skus.Name -join ", ") }
+
     foreach ($sku in $skus) {
         if ($DebugMode) { Write-Host "`nChecking SKU: $($sku.Name)" }
-        $allowedZones = @()
+
+        # Start with all zones for this SKU in the region
         $regionInfo = $sku.LocationInfo | Where-Object { $_.Location -eq $region }
+        $allowedZones = @()
         if ($regionInfo -and $regionInfo.Zones) {
-            $allowedZones = @($regionInfo.Zones)  # Already an array of zone numbers
+            $allowedZones = @($regionInfo.Zones)
         }
-        
         if ($DebugMode) { Write-Host "Allowed zones: " $allowedZones }
         
         $locationRestricted = $false
 
+        # Handle SKU restrictions
         foreach ($r in $sku.RestrictionInfo) {
             if ($DebugMode) { Write-Host "Restriction: " $r }
             $restrict_obj = @{
@@ -51,7 +54,7 @@ foreach ($region in $allowedRegions) {
                 $restrict_obj.locations = $matches[1].Trim() -split '\s*,\s*'
             }
             
-            # zones (capture REST of line)
+            # zones
             if ($r -match 'zones\s*:\s*(.+)$') {
                 $restrict_obj.zones = $matches[1].Trim() -split '\s*,\s*'
             }
@@ -63,32 +66,34 @@ foreach ($region in $allowedRegions) {
                 Write-Host "  zones     =" ($restrict_obj.zones -join ', ')
             }
 
-            # Skip SKU entirely if it is restricted in this region
+            # Exit restriction checking if the SKU is restricted in this region
             if ($restrict_obj.type -eq 'Location' -and $restrict_obj.locations -contains $region) {
                 if ($DebugMode) { Write-Host "  SKU $($sku.Name) is restricted in this region!" }
                 $locationRestricted = $true
-                break #break ends the restriction loop
+                break
             }
 
-            # Zone restrictions: remove blocked zones
+            # Remove Restricted zones
             if ($restrict_obj.type -eq 'Zone' -and $restrict_obj.locations -contains $region) {
                 $allowedZones = $allowedZones | Where-Object { $restrict_obj.zones -notcontains $_ }
                 if ($DebugMode) { Write-Host "New allowed zones: " $allowedZones }
             }
         }
 
+        # Drop SKU if restricted in this location
         if ($locationRestricted) {
-            if ($DebugMode) { Write-Host "Skipping SKU $($sku.Name) without adding to results due to location restriction." }
-            continue #continue moves to the next SKU
+            if ($DebugMode) { Write-Host "Dropping SKU $($sku.Name) due to location restriction." }
+            continue 
         }
 
         # Drop SKU if it had zones but all were restricted
         if ($sku.LocationInfo.Zones -and $allowedZones.Count -eq 0) {
-            if ($DebugMode) { Write-Host "Skipping SKU $($sku.Name) due to all zones in restriction." }
+            if ($DebugMode) { Write-Host "Dropping SKU $($sku.Name) due to all zones in restriction." }
             continue
         }
 
         # Add SKU to results
+        if ($DebugMode) { Write-Host "Adding SKU $($sku.Name) to results." }
         $results += [pscustomobject]@{
             SKU    = $sku.Name
             Region = $region

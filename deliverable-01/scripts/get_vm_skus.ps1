@@ -98,6 +98,13 @@ foreach ($region in $allowedRegions) {
             Name    = $sku.Name
             Location = $region
             Zones  = if ($allowedZones.Count -gt 0) { $allowedZones -join "," } else { "" }
+            Size = $sku.Size
+            Family = $sku.Family
+            Tier = $sku.Tier
+            vCPUs              = ($sku.Capabilities | Where-Object { $_.Name -eq 'vCPUs' }).Value
+            MemoryGB           = ($sku.Capabilities | Where-Object { $_.Name -eq 'MemoryGB' }).Value
+            OSVhdSizeMB        = ($sku.Capabilities | Where-Object { $_.Name -eq 'OSVhdSizeMB' }).Value
+            CpuArchitecture    = ($sku.Capabilities | Where-Object { $_.Name -eq 'CpuArchitectureType' }).Value
         }
     }
 }

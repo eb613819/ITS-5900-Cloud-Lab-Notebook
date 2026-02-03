@@ -481,3 +481,41 @@ New-AzVM: Cannot create a VM of size 'Standard_B2pts_v2' because this VM size on
 My solution was to use size **`Standard_B2ats_v2`** instead.
 
 ## SKU-Region Script
+During VM deployment, determining which VM sizes are actually usable for a given
+subscription and region can be non-trivial due to Azure policy restrictions,
+zone limitations, and architecture compatibility.
+
+To address this, I developed a custom **SKU discovery script**
+located in the `scripts/` directory.
+
+### Purpose
+
+The script was created to:
+- Identify VM SKUs that are **allowed by Azure policy**
+- Detect **region-level and zone-level restrictions**
+- Surface key hardware characteristics such as:
+  - CPU architecture
+  - vCPU count
+  - Memory size
+  - OS disk size limits
+- Avoid trial-and-error failures during VM deployment
+
+### Implementation Overview
+
+The solution consists of two parts:
+
+1.) **PowerShell (`get_vm_skus.ps1`)**
+  - Queries Azure using the Az PowerShell module
+  - Collects user account locations, VM SKU availability, zones, restrictions, and capabilities
+  - Outputs the results as structured JSON
+
+2.) **Python (`get_vm_skus.py`)**
+  - Executes the PowerShell script
+  - Displays a loading indicator while data is collected
+  - Presents the results in an interactive, arrow-key-driven CLI
+  - Allows filtering by location, family, tier, and CPU architecture
+
+### Usage & Setup
+
+Detailed setup instructions, Python environment configuration, and example usage
+are documented here: **[`scripts/README.md`](scripts/README.md)**

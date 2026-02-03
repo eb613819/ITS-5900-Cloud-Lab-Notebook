@@ -30,6 +30,9 @@ The purpose of this deliverable is to select and document the development tools 
   - [Cleanup the VM](#cleanup-the-vm)
   - [Problems Deploying](#problems-deploying)
 - [SKU-Region Script](#sku-region-script)
+  - [Purpose](#purpose)
+  - [Implementation Overview](#implementation-overview)
+  - [Usage and setup](#usage-and-setup)
 
 ---
 
@@ -515,7 +518,7 @@ The solution consists of two parts:
   - Presents the results in an interactive, arrow-key-driven CLI
   - Allows filtering by location, family, tier, and CPU architecture
 
-### Usage & Setup
+### Usage and Setup
 
 Detailed setup instructions, Python environment configuration, and example usage
 are documented here: **[`scripts/README.md`](scripts/README.md)**

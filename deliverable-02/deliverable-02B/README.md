@@ -17,6 +17,7 @@ These resources were used to complete this deliverable:
 - [Resources](#resources)
 - [OpenTofu Setup](#opentofu-setup)
   - [Installation](#installation)
+  - [Autocomplete](#autocoplete)
 - [OpenTofu Workflow](#opentofu-workflow)
   - [Write](#write)  
   - [Plan](#plan)  
@@ -56,6 +57,13 @@ These steps can be used to install OpenTofu on the gHost running Ubuntu 24.04.3 
   ```bash
   rm -f install-opentofu.sh
   ```
+
+### Autocomplete
+OpenTofu provides tab-completion support for all command names and some command arguments.
+To set up auto-completion, run the following:
+```bash
+tofu -install-autocomplete
+```
 
 ---
 

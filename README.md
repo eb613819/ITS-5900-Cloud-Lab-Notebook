@@ -10,10 +10,18 @@ ITS-5900-Cloud-Lab-Journal/
 ├── README.md
 ├── pre-deliverable-setup/
 │   ├── README.md
-│   └── /images
+│   ├── /images
+│   ├── /scripts
+│   └── del01_submission_evanB.md
 ├── deliverable-01/
 │   ├── README.md
 │   └── /images
+├── deliverable-02/
+│   ├── deliverable-02A/
+│   │   └── README.md
+│   └── deliverable-02B/
+│       ├── README.md
+│       └── /images
 └── .gitignore
 ```
 

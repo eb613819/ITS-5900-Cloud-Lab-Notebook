@@ -8,11 +8,12 @@ The purpose of this deliverable is to get OpenTofu setup on the gHost and use it
 ## Table of Contents
 - [Objective](#objective)
 - [OpenTofu Setup](#opentofu-setup)
-
+  - [Installation](#installation)
 ---
 
 ## OpenTofu Setup
 ### Installation
+These steps can be used to install OpenTofu on the gHost running Ubuntu 24.04.3 LTS.
 1.) Download the installer script:
   ```bash
   curl -fsSL https://get.opentofu.org/install-opentofu.sh -o install-opentofu.sh

@@ -5,8 +5,16 @@ The purpose of this deliverable is to get OpenTofu setup on the gHost and use it
 
 ---
 
+## Resources
+These resources were used to complete this deliverable:
+- [Linux Foundation OpenTofu Course](https://trainingportal.linuxfoundation.org/learn/course/getting-started-with-opentofu-lfel1009/)
+- [OpenTofu Docs](https://opentofu.org/docs/)
+  
+---
+
 ## Table of Contents
 - [Objective](#objective)
+- [Resources](#resources)
 - [OpenTofu Setup](#opentofu-setup)
   - [Installation](#installation)
 - [OpenTofu Workflow](#opentofu-workflow)

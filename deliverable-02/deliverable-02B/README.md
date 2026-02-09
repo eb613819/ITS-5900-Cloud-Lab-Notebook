@@ -59,6 +59,8 @@ These resources were used to complete this deliverable:
   - [Initialize Working Directory](#initialize-working-directory)
   - [Validate Syntax](#validate-syntax)
   - [Generate Plan](#generate-plan)
+  - [Execute Plan](#execute-plan)
+    
 ---
 
 ## OpenTofu Setup
@@ -486,13 +488,14 @@ resource "azurerm_resource_group" "main" {
 ```
 
 #### Public IP
-This code will create a public IP for the VM. A public IP address is required to allow external access to the virtual machine, such as SSH connections from outside Azure.
+This code will create a public IP for the VM. A public IP address is required to allow external access to the virtual machine, such as SSH connections from outside Azure. **Note**: these `sku` and `allocation_method` values are required for the student account.
 ```hcl
 resource "azurerm_public_ip" "main" {
   name                = "${var.prefix}-pub-ip"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
-  allocation_method   = "Dynamic"
+  sku                 = "Standard"  
+  allocation_method   = "Static"
 }
 ```
 
@@ -552,8 +555,8 @@ resource "azurerm_linux_virtual_machine" "main" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "24_04-lts"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts"
     version   = "latest"
   }
 
@@ -676,4 +679,197 @@ Next, generate a speculative execution plan. This will show the actions OpenTofu
 ```bash
 tofu plan
 ```
+This will prompt for a password and username, then output something like this:
+```console
+var.admin_password
+  The password for the VM being created.
+
+  Enter a value: 
+
+var.admin_username
+  The admin username for the VM being created.
+
+  Enter a value: 
+
+
+OpenTofu used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+
+OpenTofu will perform the following actions:
+
+  # azurerm_linux_virtual_machine.main will be created
+  + resource "azurerm_linux_virtual_machine" "main" {
+      + admin_password                                         = (sensitive value)
+      + admin_username                                         = (sensitive value)
+      + allow_extension_operations                             = true
+      + bypass_platform_safety_checks_on_user_schedule_enabled = false
+      + computer_name                                          = (known after apply)
+      + disable_password_authentication                        = false
+      + disk_controller_type                                   = (known after apply)
+      + extensions_time_budget                                 = "PT1H30M"
+      + id                                                     = (known after apply)
+      + location                                               = "northcentralus"
+      + max_bid_price                                          = -1
+      + name                                                   = "del03A-ncenus-vm"
+      + network_interface_ids                                  = (known after apply)
+      + patch_assessment_mode                                  = "ImageDefault"
+      + patch_mode                                             = "ImageDefault"
+      + platform_fault_domain                                  = -1
+      + priority                                               = "Regular"
+      + private_ip_address                                     = (known after apply)
+      + private_ip_addresses                                   = (known after apply)
+      + provision_vm_agent                                     = true
+      + public_ip_address                                      = (known after apply)
+      + public_ip_addresses                                    = (known after apply)
+      + resource_group_name                                    = "del03A-ncenus-resources"
+      + size                                                   = "Standard_B2ats_v2"
+      + virtual_machine_id                                     = (known after apply)
+      + vm_agent_platform_updates_enabled                      = false
+
+      + os_disk {
+          + caching                   = "ReadWrite"
+          + disk_size_gb              = (known after apply)
+          + name                      = (known after apply)
+          + storage_account_type      = "Standard_LRS"
+          + write_accelerator_enabled = false
+        }
+
+      + source_image_reference {
+          + offer     = "UbuntuServer"
+          + publisher = "Canonical"
+          + sku       = "24_04-lts"
+          + version   = "latest"
+        }
+
+      + termination_notification (known after apply)
+    }
+
+  # azurerm_network_interface.main will be created
+  + resource "azurerm_network_interface" "main" {
+      + accelerated_networking_enabled = (known after apply)
+      + applied_dns_servers            = (known after apply)
+      + dns_servers                    = (known after apply)
+      + enable_accelerated_networking  = (known after apply)
+      + enable_ip_forwarding           = (known after apply)
+      + id                             = (known after apply)
+      + internal_domain_name_suffix    = (known after apply)
+      + ip_forwarding_enabled          = (known after apply)
+      + location                       = "northcentralus"
+      + mac_address                    = (known after apply)
+      + name                           = "del03A-ncenus-nic"
+      + private_ip_address             = (known after apply)
+      + private_ip_addresses           = (known after apply)
+      + resource_group_name            = "del03A-ncenus-resources"
+      + virtual_machine_id             = (known after apply)
+
+      + ip_configuration {
+          + gateway_load_balancer_frontend_ip_configuration_id = (known after apply)
+          + name                                               = "internal"
+          + primary                                            = (known after apply)
+          + private_ip_address                                 = (known after apply)
+          + private_ip_address_allocation                      = "Dynamic"
+          + private_ip_address_version                         = "IPv4"
+          + public_ip_address_id                               = (known after apply)
+          + subnet_id                                          = (known after apply)
+        }
+    }
+
+  # azurerm_network_security_group.main will be created
+  + resource "azurerm_network_security_group" "main" {
+      + id                  = (known after apply)
+      + location            = "northcentralus"
+      + name                = "del03A-ncenus-nsg"
+      + resource_group_name = "del03A-ncenus-resources"
+      + security_rule       = [
+          + {
+              + access                                     = "Allow"
+              + description                                = ""
+              + destination_address_prefix                 = "*"
+              + destination_address_prefixes               = []
+              + destination_application_security_group_ids = []
+              + destination_port_range                     = "22"
+              + destination_port_ranges                    = []
+              + direction                                  = "Inbound"
+              + name                                       = "SSH"
+              + priority                                   = 1001
+              + protocol                                   = "Tcp"
+              + source_address_prefix                      = "*"
+              + source_address_prefixes                    = []
+              + source_application_security_group_ids      = []
+              + source_port_range                          = "*"
+              + source_port_ranges                         = []
+            },
+        ]
+    }
+
+  # azurerm_public_ip.main will be created
+  + resource "azurerm_public_ip" "main" {
+      + allocation_method       = "Dynamic"
+      + ddos_protection_mode    = "VirtualNetworkInherited"
+      + fqdn                    = (known after apply)
+      + id                      = (known after apply)
+      + idle_timeout_in_minutes = 4
+      + ip_address              = (known after apply)
+      + ip_version              = "IPv4"
+      + location                = "northcentralus"
+      + name                    = "del03A-ncenus-pub-ip"
+      + resource_group_name     = "del03A-ncenus-resources"
+      + sku                     = "Basic"
+      + sku_tier                = "Regional"
+    }
+
+  # azurerm_resource_group.main will be created
+  + resource "azurerm_resource_group" "main" {
+      + id       = (known after apply)
+      + location = "northcentralus"
+      + name     = "del03A-ncenus-resources"
+    }
+
+  # azurerm_subnet.internal will be created
+  + resource "azurerm_subnet" "internal" {
+      + address_prefixes                               = [
+          + "10.0.2.0/24",
+        ]
+      + default_outbound_access_enabled                = true
+      + enforce_private_link_endpoint_network_policies = (known after apply)
+      + enforce_private_link_service_network_policies  = (known after apply)
+      + id                                             = (known after apply)
+      + name                                           = "internal"
+      + private_endpoint_network_policies              = (known after apply)
+      + private_endpoint_network_policies_enabled      = (known after apply)
+      + private_link_service_network_policies_enabled  = (known after apply)
+      + resource_group_name                            = "del03A-ncenus-resources"
+      + virtual_network_name                           = "del03A-ncenus-network"
+    }
+
+  # azurerm_subnet_network_security_group_association.main will be created
+  + resource "azurerm_subnet_network_security_group_association" "main" {
+      + id                        = (known after apply)
+      + network_security_group_id = (known after apply)
+      + subnet_id                 = (known after apply)
+    }
+
+  # azurerm_virtual_network.main will be created
+  + resource "azurerm_virtual_network" "main" {
+      + address_space       = [
+          + "10.0.0.0/22",
+        ]
+      + dns_servers         = (known after apply)
+      + guid                = (known after apply)
+      + id                  = (known after apply)
+      + location            = "northcentralus"
+      + name                = "del03A-ncenus-network"
+      + resource_group_name = "del03A-ncenus-resources"
+      + subnet              = (known after apply)
+    }
+
+Plan: 8 to add, 0 to change, 0 to destroy.
+```
+
+### Execute Plan
+If everything looks good, we can apply the plan:
+```powershell
+tofu apply
+```
+Which will prompt for credentials, show a plan, prompt if it should apply, then return something like this:
 ```console

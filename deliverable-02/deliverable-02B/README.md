@@ -33,8 +33,12 @@ These resources were used to complete this deliverable:
   - [Validate the Syntax](#validate-the-syntax)
   - [Generate a Plan](#generate-a-plan)
   - [Execute the Plan](#execute-the-plan)
+  - [Change the File](#change-the-file)
   - [Clean up the Resources](#clean-up-the-resources)
-    
+- [Provision a VM in Azure](#provision-a-vm-in-azure)
+  - [Create a Directory](#create-a-directory)
+  - [Create a `main.tf` File](#create-main-vm)
+
 ---
 
 ## OpenTofu Setup
@@ -387,4 +391,12 @@ ls: cannot access 'demo.txt': No such file or directory
 
 ---
 
+## Provision a VM in Azure
+### Create a Directory
+```bash
+mkdir tofu_azure_del03 && cd tofu_azure_del03
+```
+
+<a id="create-main-vm"></a>
+### Create a `main.tf` File
 

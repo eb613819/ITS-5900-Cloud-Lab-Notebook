@@ -41,6 +41,7 @@ These resources were used to complete this deliverable:
 - [Provision a VM in Azure](#provision-a-vm-in-azure)
   - [Verify Azure Login](#verify-azure-login)
     - [Check Current Login](#check-current-login) 
+    - [Install Azure CLI](#install-azure-cli) 
     - [Log in to Azure](#log-in-to-azure) 
     - [Select the Correct Subscription](#select-the-correct-subscription) 
   - [Create a Directory](#create-a-directory)
@@ -54,7 +55,10 @@ These resources were used to complete this deliverable:
     - [Virtual Machine](#virtual-machine)
     - [Network Security Group](#network-security-group)
   - [Create a `variables.tf` File](#create-variables-vm)
-
+  - [Format the Files](#format-the-files)
+  - [Initialize Working Directory](#initialize-working-directory)
+  - [Validate Syntax](#validate-syntax)
+  - [Generate Plan](#generate-plan)
 ---
 
 ## OpenTofu Setup
@@ -406,26 +410,40 @@ ls: cannot access 'demo.txt': No such file or directory
 ---
 
 ## Provision a VM in Azure
-### Verify Azure Login
-Before running OpenTofu, ensure you are authenticated to Azure in the same PowerShell session. The `azurerm` provider uses the Azure CLI login context for authentication.
+### Verify Azure CLI Login
+Before running OpenTofu, ensure you are authenticated to Azure in the same PowerShell session. The `azurerm` provider uses the Azure CLI login context for authentication. **Note**: This is different from the Azure PowerShell module.
 
 #### Check Current Login
 Run the following command to verify that you are logged in and see which subscription is active:
 ```powershell
-Get-AzContext
+az account show
 ```
-If this returns account and subscription details, you are already logged in.
+If this returns account and subscription details, you are already logged in. If you need to install Azure CLI, log in, or change a subscription, then follow the steps below.
+
+#### Install Azure CLI
+OpenTofu’s AzureRM provider authenticates using the Azure CLI, not the Azure PowerShell (Az) module. The Azure CLI must be installed and available. On PowerShell, install it with:
+```powershell
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+```
+After installation, restart PowerShell, then verify:
+```powershell
+az version
+```
 
 #### Log in to Azure
 If you are not logged in, authenticate with:
 ```powershell
-Connect-AzAccount
+az login
 ```
 
 #### Select the Correct Subscription
 If you have access to multiple subscriptions, ensure the correct one is selected:
 ```powershell
-Set-AzContext -Subscription '00000000-0000-0000-0000-000000000000'
+az account set --subscription 00000000-0000-0000-0000-000000000000
+```
+You can confirm the active subscription again with:
+```powershell
+az account show
 ```
 
 ### Create a Directory
@@ -445,6 +463,7 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~>3.0"
     }
+  }
 }
 
 provider "azurerm" {
@@ -601,3 +620,60 @@ variable "admin_password" {
   sensitive   = true
 }
 ```
+
+### Format the Files
+The OpenTofu CLI provides commands to make code easier to work with. We can format the code by running:
+```bash
+tofu fmt
+```
+
+### Initialize the Working Directory
+After writing the code, the first step is to initialize an OpenTofu working directory. This creates initial files, loads remote state, downloads modules, etc. This is the first command that should be run:
+```bash
+tofu init
+```
+and it will output something like:
+```console
+Initializing the backend...
+
+Initializing provider plugins...
+- Finding hashicorp/azurerm versions matching "~> 3.0"...
+- Installing hashicorp/azurerm v3.117.1...
+- Installed hashicorp/azurerm v3.117.1 (signed, key ID 0C0AF313E5FD9F80)
+
+Providers are signed by their developers.
+If you'd like to know more about provider signing, you can read about it here:
+https://opentofu.org/docs/cli/plugins/signing/
+
+OpenTofu has created a lock file .terraform.lock.hcl to record the provider
+selections it made above. Include this file in your version control repository
+so that OpenTofu can guarantee to make the same selections by default when
+you run "tofu init" in the future.
+
+OpenTofu has been successfully initialized!
+
+You may now begin working with OpenTofu. Try running "tofu plan" to see
+any changes that are required for your infrastructure. All OpenTofu commands
+should now work.
+
+If you ever set or change modules or backend configuration for OpenTofu,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+```
+
+### Validate Syntax
+Optionally, we can validate the syntax and arguments of the configuration files present in the directory:
+```bash
+tofu validate
+```
+If everything is ok it will output something like:
+```console
+Success! The configuration is valid.
+```
+
+### Generate Plan
+Next, generate a speculative execution plan. This will show the actions OpenTofu would take to apply the current configuration. It will not actually perform the actions.
+```bash
+tofu plan
+```
+```console

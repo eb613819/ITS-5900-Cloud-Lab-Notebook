@@ -13,10 +13,10 @@ The purpose of this deliverable is to explore three industry talks related to ou
   - [Interesting Points](#interesting-points)
   - [Connection to Class](#connection-to-class)
 - [Talk 2 - When the Cloud was Born](#talk-2)
-  - [Speakers](#speakers)
-  - [Overview](#overview)
-  - [Interesting Points](#interesting-points)
-  - [Connection to Class](#connection-to-class)
+  - [Speakers](#speakers2)
+  - [Overview](#overview2)
+  - [Interesting Points](#points2)
+  - [Connection to Class](#connection2)
 
 ---
 
@@ -44,9 +44,13 @@ This talk showed why portability, standards,and tools like Terraform or OpenTofu
 
 <a id="talk-2"></a>
 ## Talk 2 - When the Cloud was Born
+<a id="speakers2"></a>
 ### Speakers
+<a id="overview2"></a>
 ### Overview
+<a id="points2"></a>
 ### Interesting Points
+<a id="connection2"></a>
 ### Connection to Class
 
 ---

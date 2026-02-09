@@ -140,6 +140,8 @@ The syntax of the OpenTofu language consists of a few basic elements:
 - Arguments are used inside blocks to assign specific values to names, defining settings for a resource or feature.
 - Expressions represent values, either directly or by referencing or combining other values. These expressions are used as values for arguments or within other expressions.
 
+---
+
 ## Local Sandbox / Hello World
 ### Create a Working Directory
 Create a directory to house the OpenTofu code:
@@ -215,8 +217,7 @@ Success! The configuration is valid.
 Next, generate a speculative execution plan. This will show the actions OpenTofu would take to apply the current configuration. It will not actually perform the actions.
 ```bash
 tofu plan
-```
-```bash
+
 OpenTofu used the selected providers to generate the following execution plan. Resource actions are indicated with the following
 symbols:
   + create
@@ -253,8 +254,7 @@ apply" now.
 We can execute the plan, which will create or update existing infrastructure, with the following command:
 ```bash
 tofu apply
-```
-```bash
+
 OpenTofu used the selected providers to generate the following execution plan. Resource actions are indicated with the following
 symbols:
   + create
@@ -294,8 +294,64 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
 We can check that the file was created:
 ```bash
-ls demo.txt
-```
-```bash
+ls demo.txt && cat demo.txt
+
 demo.txt
+Hello World!
+Welcome to OpenTofu!
 ```
+
+### Clean up the Resources
+We can clean up and destroy the resource created:
+```bash
+tofu destroy
+
+local_file.hello_world: Refreshing state... [id=7b53eb297df671746dc3a9f64317b8f047d4da64]
+
+OpenTofu used the selected providers to generate the following execution plan. Resource actions are indicated with the following
+symbols:
+  - destroy
+
+OpenTofu will perform the following actions:
+
+  # local_file.hello_world will be destroyed
+  - resource "local_file" "hello_world" {
+      - content              = <<-EOT
+            Hello World!
+            Welcome to OpenTofu!
+        EOT -> null
+      - content_base64sha256 = "WyXqhEWD5Vgv4QpSIV9AyAE1xKMuY5zeKZ25TSDAsus=" -> null
+      - content_base64sha512 = "tEe6G0kHw1M03wfKXwY+6tIzX0TexFAHyNtoVGwUoP7woMjEs/yvWfV5zGM0hU9RTzMEu7lE749amL7zv/J5sw==" -> null
+      - content_md5          = "2feecba9d8d2c08da8921b6320e4700d" -> null
+      - content_sha1         = "7b53eb297df671746dc3a9f64317b8f047d4da64" -> null
+      - content_sha256       = "5b25ea844583e5582fe10a52215f40c80135c4a32e639cde299db94d20c0b2eb" -> null
+      - content_sha512       = "b447ba1b4907c35334df07ca5f063eead2335f44dec45007c8db68546c14a0fef0a0c8c4b3fcaf59f579cc6334854f514f3304bbb944ef8f5a98bef3bff279b3" -> null
+      - directory_permission = "0777" -> null
+      - file_permission      = "0777" -> null
+      - filename             = "./demo.txt" -> null
+      - id                   = "7b53eb297df671746dc3a9f64317b8f047d4da64" -> null
+    }
+
+Plan: 0 to add, 0 to change, 1 to destroy.
+
+Do you really want to destroy all resources?
+  OpenTofu will destroy all your managed infrastructure, as shown above.
+  There is no undo. Only 'yes' will be accepted to confirm.
+
+  Enter a value: yes
+
+local_file.hello_world: Destroying... [id=7b53eb297df671746dc3a9f64317b8f047d4da64]
+local_file.hello_world: Destruction complete after 0s
+
+Destroy complete! Resources: 1 destroyed.
+```
+We can check that it worked:
+```bash
+ls demo.txt && cat demo.txt
+
+ls: cannot access 'demo.txt': No such file or directory
+```
+
+---
+
+

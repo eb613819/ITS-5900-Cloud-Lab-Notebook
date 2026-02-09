@@ -60,9 +60,7 @@ These steps can be used to install OpenTofu on the gHost running Ubuntu 24.04.3 
   ```bash
   tofu version
   ```
-  If everything worked, a version will show:
-  ```bash
-  itsvm@ITS-4900-Cloud-GNS3-015-eb613819:~$ tofu version
+  ```console
   OpenTofu v1.11.4
   on linux_amd64
   ```

@@ -42,6 +42,8 @@ These resources were used to complete this deliverable:
   - [Create a Directory](#create-a-directory)
   - [Create a `providers.tf` File](#create-providers-vm)
   - [Create a `main.tf` File](#create-main-vm)
+    - [A.) Resource Group](#A.\)-resource-group)
+  - [Create a `variables.tf` File](#create-variables-vm)
 
 ---
 

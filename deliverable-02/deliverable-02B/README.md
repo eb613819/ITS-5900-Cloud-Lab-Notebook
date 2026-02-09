@@ -184,7 +184,7 @@ After writing the code, the first step is to initialize an OpenTofu working dire
 tofu init
 ```
 and it will output something like:
-```bash
+```console
 
 Initializing the backend...
 
@@ -219,7 +219,7 @@ Optionally, we can validate the syntax and arguments of the configuration files 
 tofu validate
 ```
 If everything is ok it will output something like:
-```bash
+```console
 Success! The configuration is valid.
 ```
 
@@ -228,7 +228,7 @@ Next, generate a speculative execution plan. This will show the actions OpenTofu
 ```bash
 tofu plan
 ```
-```bash
+```console
 OpenTofu used the selected providers to generate the following execution plan. Resource actions are indicated with the following
 symbols:
   + create
@@ -266,7 +266,7 @@ We can execute the plan, which will create or update existing infrastructure, wi
 ```bash
 tofu apply
 ```
-```bash
+```console
 OpenTofu used the selected providers to generate the following execution plan. Resource actions are indicated with the following
 symbols:
   + create
@@ -308,7 +308,7 @@ We can check that the file was created:
 ```bash
 ls demo.txt && cat demo.txt
 ```
-```bash
+```console
 demo.txt
 Hello World!
 Welcome to OpenTofu!
@@ -319,7 +319,7 @@ We can clean up and destroy the resource created:
 ```bash
 tofu destroy
 ```
-```bash
+```console
 local_file.hello_world: Refreshing state... [id=7b53eb297df671746dc3a9f64317b8f047d4da64]
 
 OpenTofu used the selected providers to generate the following execution plan. Resource actions are indicated with the following
@@ -363,7 +363,7 @@ We can check that it worked:
 ```bash
 ls demo.txt && cat demo.txt
 ```
-```bash
+```console
 ls: cannot access 'demo.txt': No such file or directory
 ```
 

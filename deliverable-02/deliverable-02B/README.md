@@ -39,6 +39,10 @@ These resources were used to complete this deliverable:
   - [Change the File](#change-the-file)
   - [Clean up the Resources](#clean-up-the-resources)
 - [Provision a VM in Azure](#provision-a-vm-in-azure)
+  - [Verify Azure Login](#verify-azure-login)
+    - [Check Current Login](#check-current-login) 
+    - [Log in to Azure](#log-in-to-azure) 
+    - [Select the Correct Subscription](#select-the-correct-subscription) 
   - [Create a Directory](#create-a-directory)
   - [Create a `providers.tf` File](#create-providers-vm)
   - [Create a `main.tf` File](#create-main-vm)
@@ -402,6 +406,28 @@ ls: cannot access 'demo.txt': No such file or directory
 ---
 
 ## Provision a VM in Azure
+### Verify Azure Login
+Before running OpenTofu, ensure you are authenticated to Azure in the same PowerShell session. The `azurerm` provider uses the Azure CLI login context for authentication.
+
+#### Check Current Login
+Run the following command to verify that you are logged in and see which subscription is active:
+```powershell
+Get-AzContext
+```
+If this returns account and subscription details, you are already logged in.
+
+#### Log in to Azure
+If you are not logged in, authenticate with:
+```powershell
+Connect-AzAccount
+```
+
+#### Select the Correct Subscription
+If you have access to multiple subscriptions, ensure the correct one is selected:
+```powershell
+Set-AzContext -Subscription '00000000-0000-0000-0000-000000000000'
+```
+
 ### Create a Directory
 This directory will contain all OpenTofu configuration files for this deployment so the infrastructure can be managed and destroyed as a single unit.
 ```bash

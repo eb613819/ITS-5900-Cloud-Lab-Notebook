@@ -64,7 +64,8 @@ These resources were used to complete this deliverable:
   - [SSH into VM](#ssh-into-vm)
     - [Get IP](#get-ip)
     - [SSH in](#ssh-in)
-    
+  - [Cleanup Resources](#cleanup-resources)
+  
 ---
 
 ## OpenTofu Setup
@@ -1107,4 +1108,39 @@ ssh <username>@<public-ip>
 ```
 ```console
 itsvm@del03A-ncenus-vm:~$
+```
+
+### Cleanup Resources
+We can cleanup the resources using the following command. **Note**: this will destroy all of the resources controlled by this OpenTofu working directory.
+```powershell
+tofu destroy
+```
+```console
+azurerm_subnet_network_security_group_association.main: Destroying... [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/virtualNetworks/del03A-ncenus-network/subnets/internal]
+azurerm_linux_virtual_machine.main: Destroying... [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Compute/virtualMachines/del03A-ncenus-vm]
+azurerm_subnet_network_security_group_association.main: Destruction complete after 6s
+azurerm_network_security_group.main: Destroying... [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/networkSecurityGroups/del03A-ncenus-nsg]
+azurerm_linux_virtual_machine.main: Still destroying... [id=/subscriptions/789db197-194a-4cca-9770-...mpute/virtualMachines/del03A-ncenus-vm, 10s elapsed]
+azurerm_network_security_group.main: Still destroying... [id=/subscriptions/789db197-194a-4cca-9770-...etworkSecurityGroups/del03A-ncenus-nsg, 10s elapsed]
+azurerm_network_security_group.main: Destruction complete after 12s
+azurerm_linux_virtual_machine.main: Still destroying... [id=/subscriptions/789db197-194a-4cca-9770-...mpute/virtualMachines/del03A-ncenus-vm, 20s elapsed]
+azurerm_linux_virtual_machine.main: Still destroying... [id=/subscriptions/789db197-194a-4cca-9770-...mpute/virtualMachines/del03A-ncenus-vm, 30s elapsed]
+azurerm_linux_virtual_machine.main: Destruction complete after 33s
+azurerm_network_interface.main: Destroying... [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/networkInterfaces/del03A-ncenus-nic]
+azurerm_network_interface.main: Still destroying... [id=/subscriptions/789db197-194a-4cca-9770-...rk/networkInterfaces/del03A-ncenus-nic, 10s elapsed]
+azurerm_network_interface.main: Destruction complete after 12s
+azurerm_subnet.internal: Destroying... [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/virtualNetworks/del03A-ncenus-network/subnets/internal]
+azurerm_public_ip.main: Destroying... [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/publicIPAddresses/del03A-ncenus-pub-ip]
+azurerm_public_ip.main: Still destroying... [id=/subscriptions/789db197-194a-4cca-9770-...publicIPAddresses/del03A-ncenus-pub-ip, 10s elapsed]
+azurerm_subnet.internal: Still destroying... [id=/subscriptions/789db197-194a-4cca-9770-...del03A-ncenus-network/subnets/internal, 10s elapsed]
+azurerm_subnet.internal: Destruction complete after 12s
+azurerm_virtual_network.main: Destroying... [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/virtualNetworks/del03A-ncenus-network]
+azurerm_public_ip.main: Destruction complete after 12s
+azurerm_virtual_network.main: Still destroying... [id=/subscriptions/789db197-194a-4cca-9770-.../virtualNetworks/del03A-ncenus-network, 10s elapsed]
+azurerm_virtual_network.main: Destruction complete after 11s
+azurerm_resource_group.main: Destroying... [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources]
+azurerm_resource_group.main: Still destroying... [id=/subscriptions/789db197-194a-4cca-9770-...resourceGroups/del03A-ncenus-resources, 10s elapsed]
+azurerm_resource_group.main: Destruction complete after 17s
+
+Destroy complete! Resources: 8 destroyed.
 ```

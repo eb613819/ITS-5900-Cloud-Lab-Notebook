@@ -35,7 +35,7 @@ Creat a virtual environment:
 ```powershell
 cd scripts
 python3 -m venv myenv
-./myenv/bin/activate.ps1
+./myenv/bin/Activate.ps1
 ```
 Upgrade pip and install dependencies:
 ```powershell

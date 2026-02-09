@@ -25,7 +25,16 @@ These resources were used to complete this deliverable:
 - [OpenTofu Building Blocks](#opentofu-building-blocks)
   - [Common CLI Commands](#common-cli-commands)  
   - [The Language](#the-language)
-  
+- [Local Sandbox / Hello World](#local-sandbox-/-hello-world)
+  - [Create a Working Directory](#create-a-working-directory)
+  - [Create a `main.tf` File](#create-main-hello)
+  - [Format the File](#format-the-file)
+  - [Initialize the Working Directory](#initialize-the-working-directory)
+  - [Validate the Syntax](#validate-the-syntax)
+  - [Generate a Plan](#generate-a-plan)
+  - [Execute the Plan](#execute-the-plan)
+  - [Clean up the Resources](#clean-up-the-resources)
+    
 ---
 
 ## OpenTofu Setup
@@ -149,6 +158,7 @@ Create a directory to house the OpenTofu code:
 mkdir hello_world_tofu && cd hello_world_tofu
 ```
 
+<a id="create-main-hello"></a>
 ### Create a `main.tf` File
 In the OpenTofu language, we declare resources representing infrastructure as objects. Create a file `main.tf` with the contents below. This code will create a resource (a file named `demo.txt`) with the contents mentioned.
 ```hcl
@@ -217,7 +227,8 @@ Success! The configuration is valid.
 Next, generate a speculative execution plan. This will show the actions OpenTofu would take to apply the current configuration. It will not actually perform the actions.
 ```bash
 tofu plan
-
+```
+```bash
 OpenTofu used the selected providers to generate the following execution plan. Resource actions are indicated with the following
 symbols:
   + create
@@ -254,7 +265,8 @@ apply" now.
 We can execute the plan, which will create or update existing infrastructure, with the following command:
 ```bash
 tofu apply
-
+```
+```bash
 OpenTofu used the selected providers to generate the following execution plan. Resource actions are indicated with the following
 symbols:
   + create
@@ -295,7 +307,8 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 We can check that the file was created:
 ```bash
 ls demo.txt && cat demo.txt
-
+```
+```bash
 demo.txt
 Hello World!
 Welcome to OpenTofu!
@@ -305,7 +318,8 @@ Welcome to OpenTofu!
 We can clean up and destroy the resource created:
 ```bash
 tofu destroy
-
+```
+```bash
 local_file.hello_world: Refreshing state... [id=7b53eb297df671746dc3a9f64317b8f047d4da64]
 
 OpenTofu used the selected providers to generate the following execution plan. Resource actions are indicated with the following
@@ -348,7 +362,8 @@ Destroy complete! Resources: 1 destroyed.
 We can check that it worked:
 ```bash
 ls demo.txt && cat demo.txt
-
+```
+```bash
 ls: cannot access 'demo.txt': No such file or directory
 ```
 

@@ -60,6 +60,10 @@ These resources were used to complete this deliverable:
   - [Validate Syntax](#validate-syntax)
   - [Generate Plan](#generate-plan)
   - [Execute Plan](#execute-plan)
+  - [Check what was Created](#check-what-was-created)
+  - [SSH into VM](#ssh-into-vm)
+    - [Get IP](#get-ip)
+    - [SSH in](#ssh-in)
     
 ---
 
@@ -735,9 +739,9 @@ OpenTofu will perform the following actions:
         }
 
       + source_image_reference {
-          + offer     = "UbuntuServer"
+          + offer     = "0001-com-ubuntu-server-jammy"
           + publisher = "Canonical"
-          + sku       = "24_04-lts"
+          + sku       = "22_04-lts"
           + version   = "latest"
         }
 
@@ -804,7 +808,7 @@ OpenTofu will perform the following actions:
 
   # azurerm_public_ip.main will be created
   + resource "azurerm_public_ip" "main" {
-      + allocation_method       = "Dynamic"
+      + allocation_method       = "Static"
       + ddos_protection_mode    = "VirtualNetworkInherited"
       + fqdn                    = (known after apply)
       + id                      = (known after apply)
@@ -814,7 +818,7 @@ OpenTofu will perform the following actions:
       + location                = "northcentralus"
       + name                    = "del03A-ncenus-pub-ip"
       + resource_group_name     = "del03A-ncenus-resources"
-      + sku                     = "Basic"
+      + sku                     = "Standard"
       + sku_tier                = "Regional"
     }
 
@@ -873,3 +877,234 @@ tofu apply
 ```
 Which will prompt for credentials, show a plan, prompt if it should apply, then return something like this:
 ```console
+azurerm_resource_group.main: Creating...
+azurerm_resource_group.main: Creation complete after 9s [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources]
+azurerm_public_ip.main: Creating...
+azurerm_virtual_network.main: Creating...
+azurerm_network_security_group.main: Creating...
+azurerm_network_security_group.main: Creation complete after 2s [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/networkSecurityGroups/del03A-ncenus-nsg]
+azurerm_public_ip.main: Creation complete after 2s [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/publicIPAddresses/del03A-ncenus-pub-ip]
+azurerm_virtual_network.main: Creation complete after 4s [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/virtualNetworks/del03A-ncenus-network]
+azurerm_subnet.internal: Creating...
+azurerm_subnet.internal: Creation complete after 4s [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/virtualNetworks/del03A-ncenus-network/subnets/internal]
+azurerm_subnet_network_security_group_association.main: Creating...
+azurerm_network_interface.main: Creating...
+azurerm_subnet_network_security_group_association.main: Creation complete after 5s [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/virtualNetworks/del03A-ncenus-network/subnets/internal]
+azurerm_network_interface.main: Creation complete after 7s [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/networkInterfaces/del03A-ncenus-nic]
+azurerm_linux_virtual_machine.main: Creating...
+azurerm_linux_virtual_machine.main: Still creating... [10s elapsed]
+azurerm_linux_virtual_machine.main: Still creating... [20s elapsed]
+azurerm_linux_virtual_machine.main: Still creating... [30s elapsed]
+azurerm_linux_virtual_machine.main: Still creating... [40s elapsed]
+azurerm_linux_virtual_machine.main: Creation complete after 49s [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Compute/virtualMachines/del03A-ncenus-vm]
+
+Apply complete! Resources: 8 added, 0 changed, 0 destroyed.
+```
+
+### Check what was Created
+You can see the resources by running:
+```powershell
+tofu show
+```
+```console
+# azurerm_linux_virtual_machine.main:
+resource "azurerm_linux_virtual_machine" "main" {
+    admin_password                                         = (sensitive value)
+    admin_username                                         = (sensitive value)
+    allow_extension_operations                             = true
+    bypass_platform_safety_checks_on_user_schedule_enabled = false
+    computer_name                                          = "del03A-ncenus-vm"
+    disable_password_authentication                        = false
+    encryption_at_host_enabled                             = false
+    extensions_time_budget                                 = "PT1H30M"
+    id                                                     = "/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Compute/virtualMachines/del03A-ncenus-vm"
+    location                                               = "northcentralus"
+    max_bid_price                                          = -1
+    name                                                   = "del03A-ncenus-vm"
+    network_interface_ids                                  = [
+        "/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/networkInterfaces/del03A-ncenus-nic",
+    ]
+    patch_assessment_mode                                  = "ImageDefault"
+    patch_mode                                             = "ImageDefault"
+    platform_fault_domain                                  = -1
+    priority                                               = "Regular"
+    private_ip_address                                     = "10.0.2.4"
+    private_ip_addresses                                   = [
+        "10.0.2.4",
+    ]
+    provision_vm_agent                                     = true
+    public_ip_address                                      = "130.131.46.73"
+    public_ip_addresses                                    = [
+        "130.131.46.73",
+    ]
+    resource_group_name                                    = "del03A-ncenus-resources"
+    secure_boot_enabled                                    = false
+    size                                                   = "Standard_B2ats_v2"
+    virtual_machine_id                                     = "3d0ab4da-dda4-4c03-bd5e-dccfc384e3c5"
+    vm_agent_platform_updates_enabled                      = false
+    vtpm_enabled                                           = false
+
+    os_disk {
+        caching                   = "ReadWrite"
+        disk_size_gb              = 30
+        name                      = "del03A-ncenus-vm_OsDisk_1_89b3f1b3cb84484ebd570b2f457f6ed5"
+        storage_account_type      = "Standard_LRS"
+        write_accelerator_enabled = false
+    }
+
+    source_image_reference {
+        offer     = "0001-com-ubuntu-server-jammy"
+        publisher = "Canonical"
+        sku       = "22_04-lts"
+        version   = "latest"
+    }
+}
+
+# azurerm_network_interface.main:
+resource "azurerm_network_interface" "main" {
+    accelerated_networking_enabled = false
+    applied_dns_servers            = []
+    dns_servers                    = []
+    enable_accelerated_networking  = false
+    enable_ip_forwarding           = false
+    id                             = "/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/networkInterfaces/del03A-ncenus-nic"
+    internal_domain_name_suffix    = "sbl0kewtzqjunhmfvoxphes0va.ex.internal.cloudapp.net"
+    ip_forwarding_enabled          = false
+    location                       = "northcentralus"
+    name                           = "del03A-ncenus-nic"
+    private_ip_address             = "10.0.2.4"
+    private_ip_addresses           = [
+        "10.0.2.4",
+    ]
+    resource_group_name            = "del03A-ncenus-resources"
+
+    ip_configuration {
+        name                          = "internal"
+        primary                       = true
+        private_ip_address            = "10.0.2.4"
+        private_ip_address_allocation = "Dynamic"
+        private_ip_address_version    = "IPv4"
+        public_ip_address_id          = "/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/publicIPAddresses/del03A-ncenus-pub-ip"
+        subnet_id                     = "/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/virtualNetworks/del03A-ncenus-network/subnets/internal"
+    }
+}
+
+# azurerm_network_security_group.main:
+resource "azurerm_network_security_group" "main" {
+    id                  = "/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/networkSecurityGroups/del03A-ncenus-nsg"
+    location            = "northcentralus"
+    name                = "del03A-ncenus-nsg"
+    resource_group_name = "del03A-ncenus-resources"
+    security_rule       = [
+        {
+            access                                     = "Allow"
+            description                                = ""
+            destination_address_prefix                 = "*"
+            destination_address_prefixes               = []
+            destination_application_security_group_ids = []
+            destination_port_range                     = "22"
+            destination_port_ranges                    = []
+            direction                                  = "Inbound"
+            name                                       = "SSH"
+            priority                                   = 1001
+            protocol                                   = "Tcp"
+            source_address_prefix                      = "*"
+            source_address_prefixes                    = []
+            source_application_security_group_ids      = []
+            source_port_range                          = "*"
+            source_port_ranges                         = []
+        },
+    ]
+}
+
+# azurerm_public_ip.main:
+resource "azurerm_public_ip" "main" {
+    allocation_method       = "Static"
+    ddos_protection_mode    = "VirtualNetworkInherited"
+    id                      = "/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/publicIPAddresses/del03A-ncenus-pub-ip"
+    idle_timeout_in_minutes = 4
+    ip_address              = "130.131.46.73"
+    ip_version              = "IPv4"
+    location                = "northcentralus"
+    name                    = "del03A-ncenus-pub-ip"
+    resource_group_name     = "del03A-ncenus-resources"
+    sku                     = "Standard"
+    sku_tier                = "Regional"
+}
+
+# azurerm_resource_group.main:
+resource "azurerm_resource_group" "main" {
+    id       = "/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources"
+    location = "northcentralus"
+    name     = "del03A-ncenus-resources"
+}
+
+# azurerm_subnet.internal:
+resource "azurerm_subnet" "internal" {
+    address_prefixes                               = [
+        "10.0.2.0/24",
+    ]
+    default_outbound_access_enabled                = true
+    enforce_private_link_endpoint_network_policies = false
+    enforce_private_link_service_network_policies  = false
+    id                                             = "/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/virtualNetworks/del03A-ncenus-network/subnets/internal"
+    name                                           = "internal"
+    private_endpoint_network_policies              = "Enabled"
+    private_endpoint_network_policies_enabled      = true
+    private_link_service_network_policies_enabled  = true
+    resource_group_name                            = "del03A-ncenus-resources"
+    virtual_network_name                           = "del03A-ncenus-network"
+}
+
+# azurerm_subnet_network_security_group_association.main:
+resource "azurerm_subnet_network_security_group_association" "main" {
+    id                        = "/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/virtualNetworks/del03A-ncenus-network/subnets/internal"
+    network_security_group_id = "/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/networkSecurityGroups/del03A-ncenus-nsg"
+    subnet_id                 = "/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/virtualNetworks/del03A-ncenus-network/subnets/internal"
+}
+
+# azurerm_virtual_network.main:
+resource "azurerm_virtual_network" "main" {
+    address_space           = [
+        "10.0.0.0/22",
+    ]
+    dns_servers             = []
+    flow_timeout_in_minutes = 0
+    guid                    = "12a55790-ccd3-4613-9d85-abaef3925aa8"
+    id                      = "/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/del03A-ncenus-resources/providers/Microsoft.Network/virtualNetworks/del03A-ncenus-network"
+    location                = "northcentralus"
+    name                    = "del03A-ncenus-network"
+    resource_group_name     = "del03A-ncenus-resources"
+    subnet                  = []
+}
+```
+Or we can ask Azure directly:
+```powershell
+Get-AzVM -ResourceGroupName "del03A-ncenus-resources"
+```
+```console
+ResourceGroupName                   Name       Location            VmSize OsType               NIC ProvisioningState Zone
+-----------------                   ----       --------            ------ ------               --- ----------------- ----
+del03A-ncenus-resources del03A-ncenus-vm northcentralus Standard_B2ats_v2  Linux del03A-ncenus-nic         Succeeded
+```
+
+### SSH into VM
+#### Get IP
+Get the public IP address of the VM:
+```powershell
+Get-AzPublicIpAddress -ResourceGroupName "del03A-ncenus-resources" | Select-Object Name, IpAddress
+```
+```console
+Name                 IpAddress
+----                 ---------
+del03A-ncenus-pub-ip 130.131.46.73
+```
+
+#### SSH in
+SSH in using the username and password supplied during `tofu apply` and the public IP address from above:
+```powershell
+ssh <username>@<public-ip>
+```
+```console
+itsvm@del03A-ncenus-vm:~$
+```

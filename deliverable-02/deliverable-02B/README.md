@@ -17,7 +17,7 @@ These resources were used to complete this deliverable:
 - [Resources](#resources)
 - [OpenTofu Setup](#opentofu-setup)
   - [Installation](#installation)
-  - [Autocomplete](#autocoplete)
+  - [Autocomplete](#autocomplete)
 - [OpenTofu Workflow](#opentofu-workflow)
   - [Write](#write)  
   - [Plan](#plan)  
@@ -129,7 +129,7 @@ OpenTofu is built around two core components: the **tofu CLI** and the **OpenTof
 ### The Language
 The syntax of the OpenTofu language consists of a few basic elements:
 
-```bash
+```hcl
 <BLOCK TYPE> "<BLOCK LABEL>" "<BLOCK LABEL>" {
   # Block body
   <IDENTIFIER> = <EXPRESSION> # Argument

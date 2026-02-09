@@ -18,6 +18,8 @@ The purpose of this deliverable is to explore three industry talks related to ou
   - [Interesting Points](#interesting-points)
   - [Connection to Class](#connection-to-class)
 
+---
+
 <a id="talk-1"></a>
 ## Talk 1 - Public Vs. Private Cloud in 2025
 [Link to talk](https://packetpushers.net/podcasts/day-two-devops/d2do271-public-vs-private-cloud-in-2025/)
@@ -38,8 +40,16 @@ This talk explores the state of cloud computing in 2025 and compares public and 
 ### Connection to Class
 This talk showed why portability, standards,and tools like Terraform or OpenTofu are important for maintaing control over infrastructure and costs. It reinforces the idea that understanding cloud fundamentals matters more than just how to use a single provider's platform.
 
+---
+
 <a id="talk-2"></a>
 ## Talk 2 - When the Cloud was Born
+### Speakers
+### Overview
+### Interesting Points
+### Connection to Class
+
+---
 
 <a id="talk-3"></a>
 ## Talk 3 - The Myth of Portability: Why Your Cloud Native App Is Married To Your Provider

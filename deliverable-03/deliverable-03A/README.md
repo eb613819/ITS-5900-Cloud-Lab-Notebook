@@ -44,6 +44,7 @@ This talk showed why portability, standards,and tools like Terraform or OpenTofu
 
 <a id="talk-2"></a>
 ## Talk 2 - When the Cloud was Born
+[Link to talk](https://packetpushers.net/podcasts/day-two-devops/d2c244-when-the-cloud-was-born/)
 <a id="speakers2"></a>
 ### Speakers
 <a id="overview2"></a>

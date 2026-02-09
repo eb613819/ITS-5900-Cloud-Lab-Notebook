@@ -42,7 +42,13 @@ These resources were used to complete this deliverable:
   - [Create a Directory](#create-a-directory)
   - [Create a `providers.tf` File](#create-providers-vm)
   - [Create a `main.tf` File](#create-main-vm)
-    - [A.) Resource Group](#A.\)-resource-group)
+    - [Resource Group](#resource-group)
+    - [Public IP](#public-ip)
+    - [Virtual Network](#virtual-network)
+    - [Subnet](#subnet)
+    - [Network Interface](#network-interface)
+    - [Virtual Machine](#virtual-machine)
+    - [Network Security Group](#network-security-group)
   - [Create a `variables.tf` File](#create-variables-vm)
 
 ---
@@ -425,7 +431,7 @@ Docs on the provider `hashicorp/azurerm` can be found [here](https://registry.te
 ### Create a `main.tf` File
 The file `main.tf` will have the information about the resources we want to create. Many pieces need to be created to provision a VM. Each piece is outlined below. [This example](https://github.com/hashicorp/terraform-provider-azurerm/blob/main/examples/virtual-machines/linux/basic-password/main.tf) was used to make the code.
 
-#### A.) Resource Group
+#### Resource Group
 This code will create a new `azurerm_resource_group` for the VM. The resource group acts as a logical container for all Azure resources created by this configuration, allowing them to be managed and deleted together.
 ```hcl
 resource "azurerm_resource_group" "main" {
@@ -434,7 +440,7 @@ resource "azurerm_resource_group" "main" {
 }
 ```
 
-#### B.) Public IP
+#### Public IP
 This code will create a public IP for the VM. A public IP address is required to allow external access to the virtual machine, such as SSH connections from outside Azure.
 ```hcl
 resource "azurerm_public_ip" "main" {
@@ -445,7 +451,7 @@ resource "azurerm_public_ip" "main" {
 }
 ```
 
-#### C.) Virtual Network
+#### Virtual Network
 This code will create a new `azurerm_virtual_network` for the VM. The virtual network provides isolated networking for the VM and defines the address space in which subnets and resources can be created.
 ```hcl
 resource "azurerm_virtual_network" "main" {
@@ -456,7 +462,7 @@ resource "azurerm_virtual_network" "main" {
 }
 ```
 
-#### D.) Subnet
+#### Subnet
 This code will create a new `azurerm_subnet` for the VM. The subnet divides the virtual network into a smaller address range where the virtual machine’s network interface will reside.
 ```hcl
 resource "azurerm_subnet" "internal" {
@@ -467,7 +473,7 @@ resource "azurerm_subnet" "internal" {
 }
 ```
 
-#### E.) Network Interface (NIC)
+#### Network Interface
 This code will create a new `azurerm_network_interface` for the VM. The network interface connects the virtual machine to the subnet and associates it with both private and public IP addresses.
 ```hcl
 resource "azurerm_network_interface" "main" {
@@ -484,7 +490,7 @@ resource "azurerm_network_interface" "main" {
 }
 ```
 
-#### F.) Virtual Machine (VM)
+#### Virtual Machine
 This code will create the actual VM. This resource defines the compute instance itself, including the operating system image, VM size, authentication method, and attached network interface.
 ```hcl
 resource "azurerm_linux_virtual_machine" "main" {
@@ -513,7 +519,7 @@ resource "azurerm_linux_virtual_machine" "main" {
 }
 ```
 
-#### G.) Network Security Group
+#### Network Security Group
 The network security group controls inbound and outbound traffic rules and is used here to explicitly allow SSH access on port 22.
 ```hcl
 resource "azurerm_network_security_group" "main" {

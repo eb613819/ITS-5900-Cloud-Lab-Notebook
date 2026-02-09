@@ -314,6 +314,24 @@ Hello World!
 Welcome to OpenTofu!
 ```
 
+### Change the File
+We can change the contents of `demo.txt` to something like:
+```hcl
+resource "local_file" "hello_world" {
+  filename = "${path.module}/demo.txt"
+
+  content = <<-EOF
+    Hello World!
+    I changed the contents of this file!
+  EOF
+}
+```
+Then run these commands to plan and apply the changes:
+```bash
+tofu plan
+tofu apply
+```
+
 ### Clean up the Resources
 We can clean up and destroy the resource created:
 ```bash

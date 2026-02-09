@@ -19,6 +19,8 @@ foreach ($region in $allowedRegions) {
     # Get all Standard_B[12]* SKUs for this region
     $skus = Get-AzComputeResourceSku -Location $region |
         Where-Object { $_.ResourceType -like 'virtualMachines'}
+        # For just Standard_B
+        # Where-Object {$_.Name -like 'Standard_B[12][a-z]*'}
         
     if ($DebugMode) { Write-Host "Found SKUs:" ($skus.Name -join ", ") }
 

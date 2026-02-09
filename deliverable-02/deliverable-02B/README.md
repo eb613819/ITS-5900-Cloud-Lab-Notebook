@@ -37,6 +37,7 @@ These resources were used to complete this deliverable:
   - [Clean up the Resources](#clean-up-the-resources)
 - [Provision a VM in Azure](#provision-a-vm-in-azure)
   - [Create a Directory](#create-a-directory)
+  - [Create a `providers.tf` File](#create-providers-vm)
   - [Create a `main.tf` File](#create-main-vm)
 
 ---
@@ -395,6 +396,25 @@ ls: cannot access 'demo.txt': No such file or directory
 mkdir tofu_azure_del03 && cd tofu_azure_del03
 ```
 
+<a id="create-providers-vm"></a>
+### Create a `providers.tf` File
+When creating a resource using Azure, we need to specify our providers. This can optionally be done directly in `main.tf`. We will use the hashicorp provider, since that is from Terraform and is reasonably trustworthy.
+Create a `providers.tf` with the following code:
+```hcl
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~>2.0"
+    }
+}
+
+provider "azurerm" {
+  features {}
+}
+```
+Docs on the provider `hashicorp/azurerm` can be found [here](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
+
 <a id="create-main-vm"></a>
 ### Create a `main.tf` File
-
+The file `main.tf` will have the information about the resources we want to create:

@@ -53,7 +53,7 @@ while True:
     filtered_skus = skus.copy()
     no_filters = False
     # Choose filter catagories
-    top_filters = ["Location", "Size", "Family", "Tier", "CpuArchitecture"]
+    top_filters = sorted(["Location", "Size", "Family", "Tier", "CpuArchitecture"])
     selected_filters = questionary.checkbox(
         "Select filter categories:",
         choices=top_filters
@@ -66,7 +66,10 @@ while True:
     # Choose filters
     filters_selected = {}
     for f in selected_filters:
-        unique_values = list({sku[f] for sku in filtered_skus})
+        unique_values = sorted(
+            {sku[f] for sku in filtered_skus},
+            key=lambda x: str(x).lower()
+        )
         choices = questionary.checkbox(
             f"Select values for {f}:",
             choices=unique_values

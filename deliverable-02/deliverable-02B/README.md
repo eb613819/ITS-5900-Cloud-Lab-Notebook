@@ -9,7 +9,10 @@ The purpose of this deliverable is to get OpenTofu setup on the gHost and use it
 These resources were used to complete this deliverable:
 - [Linux Foundation OpenTofu Course](https://trainingportal.linuxfoundation.org/learn/course/getting-started-with-opentofu-lfel1009/)
 - [OpenTofu Docs](https://opentofu.org/docs/)
-  
+- [`hashicorp/azurerm` docs](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
+- [`hashicorp/azurerm` `azurerm_linux_virtual_machine` docs](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine)
+- [`hashicorp/azurerm` `azurerm_linux_virtual_machine` examples](https://github.com/hashicorp/terraform-provider-azurerm/tree/main/examples/virtual-machines/linux)
+
 ---
 
 ## Table of Contents
@@ -392,6 +395,7 @@ ls: cannot access 'demo.txt': No such file or directory
 
 ## Provision a VM in Azure
 ### Create a Directory
+This directory will contain all OpenTofu configuration files for this deployment so the infrastructure can be managed and destroyed as a single unit.
 ```bash
 mkdir tofu_azure_del03 && cd tofu_azure_del03
 ```
@@ -405,7 +409,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~>2.0"
+      version = "~>3.0"
     }
 }
 
@@ -417,4 +421,147 @@ Docs on the provider `hashicorp/azurerm` can be found [here](https://registry.te
 
 <a id="create-main-vm"></a>
 ### Create a `main.tf` File
-The file `main.tf` will have the information about the resources we want to create:
+The file `main.tf` will have the information about the resources we want to create. Many pieces need to be created to provision a VM. Each piece is outlined below. [This example](https://github.com/hashicorp/terraform-provider-azurerm/blob/main/examples/virtual-machines/linux/basic-password/main.tf) was used to make the code.
+
+#### A.) Resource Group
+This code will create a new `azurerm_resource_group` for the VM. The resource group acts as a logical container for all Azure resources created by this configuration, allowing them to be managed and deleted together.
+```hcl
+resource "azurerm_resource_group" "main" {
+  name     = "${var.prefix}-resources"
+  location = var.location
+}
+```
+
+#### B.) Public IP
+This code will create a public IP for the VM. A public IP address is required to allow external access to the virtual machine, such as SSH connections from outside Azure.
+```hcl
+resource "azurerm_public_ip" "main" {
+  name                = "${var.prefix}-pub-ip"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  allocation_method   = "Dynamic"
+}
+```
+
+#### C.) Virtual Network
+This code will create a new `azurerm_virtual_network` for the VM. The virtual network provides isolated networking for the VM and defines the address space in which subnets and resources can be created.
+```hcl
+resource "azurerm_virtual_network" "main" {
+  name                = "${var.prefix}-network"
+  address_space       = ["10.0.0.0/22"]
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+}
+```
+
+#### D.) Subnet
+This code will create a new `azurerm_subnet` for the VM. The subnet divides the virtual network into a smaller address range where the virtual machine’s network interface will reside.
+```hcl
+resource "azurerm_subnet" "internal" {
+  name                 = "internal"
+  resource_group_name  = azurerm_resource_group.main.name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes     = ["10.0.2.0/24"]
+}
+```
+
+#### E.) Network Interface (NIC)
+This code will create a new `azurerm_network_interface` for the VM. The network interface connects the virtual machine to the subnet and associates it with both private and public IP addresses.
+```hcl
+resource "azurerm_network_interface" "main" {
+  name                = "${var.prefix}-nic"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.internal.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.main.id
+  }
+}
+```
+
+#### F.) Virtual Machine (VM)
+This code will create the actual VM. This resource defines the compute instance itself, including the operating system image, VM size, authentication method, and attached network interface.
+```hcl
+resource "azurerm_linux_virtual_machine" "main" {
+  name                            = "${var.prefix}-vm"
+  resource_group_name             = azurerm_resource_group.main.name
+  location                        = azurerm_resource_group.main.location
+  size                            = "Standard_B2ats_v2"
+  admin_username                  = var.admin_username
+  admin_password                  = var.admin_password
+  disable_password_authentication = false
+  network_interface_ids = [
+    azurerm_network_interface.main.id,
+  ]
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "24_04-lts"
+    version   = "latest"
+  }
+
+  os_disk {
+    storage_account_type = "Standard_LRS"
+    caching              = "ReadWrite"
+  }
+}
+```
+
+#### G.) Network Security Group
+The network security group controls inbound and outbound traffic rules and is used here to explicitly allow SSH access on port 22.
+```hcl
+resource "azurerm_network_security_group" "main" {
+  name                = "${var.prefix}-nsg"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+
+  security_rule {
+    name                       = "SSH"
+    priority                   = 1001
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
+resource "azurerm_subnet_network_security_group_association" "main" {
+  subnet_id                 = azurerm_subnet.internal.id
+  network_security_group_id = azurerm_network_security_group.main.id
+}
+```
+
+<a id="create-variables-vm"></a>
+### Create a `variables.tf` File
+The `variables.tf` will hold the variables used in `main.tf`. **Note**: mark the credentials as `sensitive` to keep them from being displayed in logs or CLI output.  [This example](https://github.com/hashicorp/terraform-provider-azurerm/blob/main/examples/virtual-machines/linux/basic-password/variables.tf) was used to create the code.
+
+```hcl
+variable "prefix" {
+  description = "The prefix which should be used for all resources in this example"
+  type        = string
+  default     = "del03A-"
+}
+
+variable "location" {
+  description = "The Azure Region in which all resources in this example should be created."
+}
+
+variable "admin_username" {
+  description = "The admin username for the VM being created."
+  type        = string
+  sensitive   = true
+}
+
+variable "admin_password" {
+  description = "The password for the VM being created."
+  type        = string
+  sensitive   = true
+}
+```

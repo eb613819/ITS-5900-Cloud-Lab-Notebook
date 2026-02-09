@@ -8,6 +8,15 @@ The purpose of this deliverable is to explore three industry talks related to ou
 ## Table of Contents
 - [Objective](#objective)
 - [Talk 1 - Public Vs. Private Cloud in 2025](#talk-1)
+  - [Speakers](#speakers)
+  - [Overview](#overview)
+  - [Interesting Points](#interesting-points)
+  - [Connection to Class](#connection-to-class)
+- [Talk 2 - When the Cloud was Born](#talk-2)
+  - [Speakers](#speakers)
+  - [Overview](#overview)
+  - [Interesting Points](#interesting-points)
+  - [Connection to Class](#connection-to-class)
 
 <a id="talk-1"></a>
 ## Talk 1 - Public Vs. Private Cloud in 2025

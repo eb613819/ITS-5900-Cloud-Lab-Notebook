@@ -21,7 +21,13 @@ ITS-5900-Cloud-Lab-Journal/
 │   │   └── README.md
 │   └── deliverable-02B/
 │       ├── README.md
-│       └── /images
+│       └── /src
+│           ├── main.tf
+│           ├── providers.tf
+│           └── variables.tf
+├── deliverable-03/
+│   └── deliverable-03A/
+│       └── README.md
 └── .gitignore
 ```
 

@@ -41,6 +41,15 @@ The purpose of this deliverable is to
       - [Connection to Network Security Group](#connection-to-network-security-group)
    - [Virtual Machine](#virtual-machine)
    - [Outputs](#outputs)
+   - [Testing the Code](#testing-the-code)
+      - [Update Subscription ID](#update-subscription-id)
+      - [Update Location](#update-location)
+      - [Format File](#format-file)
+      - [Initialize the Working Directory](#initialize-the-working-directory)
+      - [Validate File](#validate-file)
+      - [Generate and Execute Plan](#generate-and-execute-plan)
+      - [SSH Into VM](#ssh-into-vm)
+      - [Cleanup Resources](#cleanup-resources)
 
 ---
 
@@ -163,6 +172,8 @@ A `~/Cloud/ITS-4900-Cloud-Release/Deliverable_3/Task3/main.tf` file is provided 
 **Note**: User-specific changes will need to be made before this `main.tf` is usable.
 
 ### Providers
+The first two blocks of `main.tf` describe the provider Tofu should use. Optionally, this could be moved to a `providers.tf` file.
+
 #### Terraform Block
 The Terraform block defines which provider should be used and the required version.
 ```hcl
@@ -335,7 +346,7 @@ resource "azurerm_linux_virtual_machine" "main" {
 }
 ```
 **Note**: `location`, `resource_group_name`, and `network_interface_ids` need to match the previously created components.
-**IMPORTANT**: the admin username and password were provided directly in the file. This is not a safe practice. This could be fixed using variables.
+**IMPORTANT**: the admin username and password were provided directly in the file. This is not a safe practice. One way to fix this is using variables that the user is prompted for at runtime.
 
 ### Outputs
 Outputs display useful information,
@@ -351,3 +362,96 @@ output "ssh_connection" {
 }
 ```
 Prints a ready-to-use SSH command. However, the username does not match the value of `admin_username` provided in the VM block, so this command will not work.
+
+### Testing the Code
+I performed the following steps to test the provided `main.tf` file.
+
+#### Update Subscription ID
+A subscription ID was provided in the file that did not match my subscription. I removed the `subscription_id` option from the `provider` block, since OpenTofu’s AzureRM provider authenticates using the Azure CLI and I am already logged in with the correct subscription selected. I checked using the following command:
+```bash
+az account show
+```
+
+#### Update Location
+My student subscription does not have access to `westus2` so I changed the location to `northcentralus`.
+
+#### Format File
+I formatted `main.tf` using the following command:
+```bash
+tofu fmt
+```
+
+#### Initialize the Working Directory
+I initialized `~/Cloud/ITS-4900-CloudRelease/Deliverable_3/Task_3` as a Tofu working directory by running:
+```bash
+tofu init
+```
+
+#### Validate File
+I validated the syntax of `main.tf` using:
+```bash
+tofu validate
+```
+
+#### Generate and Execute Plan
+I generated a speculative plan using:
+```bash
+tofu plan
+```
+Everything looked good so I executed using:
+```bash
+tofu apply
+```
+Which output:
+```console
+azurerm_resource_group.main: Creating...
+azurerm_resource_group.main: Still creating... [10s elapsed]
+azurerm_resource_group.main: Still creating... [20s elapsed]
+azurerm_resource_group.main: Creation complete after 22s [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/its-cloud-del2b]
+azurerm_network_security_group.main: Creating...
+azurerm_public_ip.main: Creating...
+azurerm_virtual_network.main: Creating...
+azurerm_network_security_group.main: Creation complete after 2s [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/its-cloud-del2b/providers/Microsoft.Network/networkSecurityGroups/nsg]
+azurerm_public_ip.main: Creation complete after 2s [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/its-cloud-del2b/providers/Microsoft.Network/publicIPAddresses/del01-testvm-wus2-0101]
+azurerm_virtual_network.main: Creation complete after 5s [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/its-cloud-del2b/providers/Microsoft.Network/virtualNetworks/vnet]
+azurerm_subnet.main: Creating...
+azurerm_subnet.main: Creation complete after 4s [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/its-cloud-del2b/providers/Microsoft.Network/virtualNetworks/vnet/subnets/subnet]
+azurerm_network_interface.main: Creating...
+azurerm_network_interface.main: Creation complete after 2s [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/its-cloud-del2b/providers/Microsoft.Network/networkInterfaces/nic]
+azurerm_network_interface_security_group_association.main: Creating...
+azurerm_linux_virtual_machine.main: Creating...
+azurerm_network_interface_security_group_association.main: Creation complete after 4s [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/its-cloud-del2b/providers/Microsoft.Network/networkInterfaces/nic|/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/its-cloud-del2b/providers/Microsoft.Network/networkSecurityGroups/nsg]
+azurerm_linux_virtual_machine.main: Still creating... [10s elapsed]
+azurerm_linux_virtual_machine.main: Still creating... [20s elapsed]
+azurerm_linux_virtual_machine.main: Still creating... [30s elapsed]
+azurerm_linux_virtual_machine.main: Still creating... [40s elapsed]
+azurerm_linux_virtual_machine.main: Still creating... [50s elapsed]
+azurerm_linux_virtual_machine.main: Creation complete after 51s [id=/subscriptions/789db197-194a-4cca-9770-b4018ed723a8/resourceGroups/its-cloud-del2b/providers/Microsoft.Compute/virtualMachines/del01-testvm-wus2-01]
+
+Apply complete! Resources: 8 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+public_ip_address = "REDACTED"
+ssh_connection = "ssh azureuser@REDACTED"
+```
+
+#### SSH Into VM:
+First, I tried to SSH using the output command:
+```bash
+ssh azureuser@REDACTED
+```
+As expected, this did not work since `azureuser` was not the `admin_username` provided. After using the provided username, I was able to connect over SSH.
+```console
+REDACTED@del01-testvm-wus2-01:~$
+```
+**Note**: I did not update the names of the resources when I changed the location, which is why the machine is called `del01-testvm-wus2-01` even though it is in `northcentralus`. Changing the names would be much simpler if we used a variable for the names:
+```hcl
+   name                            = "${var.prefix}-vm"
+```
+
+#### Cleanup Resources
+I destroyed all created resources using the following command.
+```bash
+tofu destroy
+```

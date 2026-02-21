@@ -50,6 +50,16 @@ The purpose of this deliverable is to
       - [Generate and Execute Plan](#generate-and-execute-plan)
       - [SSH Into VM](#ssh-into-vm)
       - [Cleanup Resources](#cleanup-resources)
+- [Task 4 - Ansible Initialization](#task-4)
+   - [Install Ansible](#install-ansible)
+   - [Test the Ansible Configuration](#test-the-ansible-configuration)
+      - [Move to Task 4 Folder](#move-to-task-4-folder)
+      - [Run the Test Playbook](#run-the-test-playbook)
+   - [Identify Programming Concepts](#identify-programming-concepts)
+      - [Variables](#variables)
+      - [Variable Manipulation](#variable-manipulation)
+      - [Conditional Statements](#conditional-statements)
+      - [Proposed Looping Task](#proposed-looping-task)
 
 ---
 
@@ -598,7 +608,7 @@ I propose we loop through the `allowed_regions` array and print them individuall
 **Note**: for the loop to work, we will have to flatten `allowed_regions` when it is parsed since it is actually a nested list:
 ```yaml
 ansible.builtin.set_fact:
-        allowed_regions: "{{ policy_raw.stdout | from_json |flatten }}"
+        allowed_regions: "{{ policy_raw.stdout | from_json | flatten }}"
 ```
 
 This task outputs the following:
@@ -620,3 +630,6 @@ ok: [localhost] => (item=mexicocentral) => {
     "msg": "Policy-allowed region: mexicocentral"
 }
 ```
+
+---
+

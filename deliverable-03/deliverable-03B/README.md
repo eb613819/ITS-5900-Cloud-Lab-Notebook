@@ -16,9 +16,16 @@ The purpose of this deliverable is to
 
 ## Table of Contents
 - [Objective](#objective)
+- [Reference Documentation](#reference-documentation)
 - [Task 1 – Clone the class GitHub repo and install Ansible](#task-1)
 
 ---
 
 <a id="task-1"></a>
 ## Task 1 - Clone the class GitHub repo and install Ansible
+The first step of this deliverable is to clone the class repo. To do this we must first check if the gHost's CLI Git client is authenticated to GitHub:
+```bash
+gh repo view OHIO-ECT/Lab-Notebook-Cheat-Sheet
+```
+
+If it is not, follow the steps from the [Pre-deliverable Setup](../../pre-deliverable-setup/README.md#authentication)

@@ -23,9 +23,24 @@ The purpose of this deliverable is to
 
 <a id="task-1"></a>
 ## Task 1 - Clone the class GitHub repo and install Ansible
-The first step of this deliverable is to clone the class repo. To do this we must first check if the gHost's CLI Git client is authenticated to GitHub:
-```bash
-gh auth status
+### Clone Class Repo
+The first step of this deliverable is to clone the class repo.
+
+1. **Authenticate Git**
+   First, we must check if the gHost's CLI Git client is authenticated to GitHub:
+  ```bash
+  gh auth status
+  ```
+  
+  If it is not, follow the steps from the [Pre-deliverable Setup](../../pre-deliverable-setup/README.md#authentication)
+
+2. **Create Directory**
+  We want a standard directory structure for the homework assignments. The homework will assume a structure like `~/Cloud/<GITHUB_REPO_NAME>`. We will match that to keep things simple:
+  ```bash
+  mkdir ~/Cloud
+  cd ~/Cloud
 ```
 
-If it is not, follow the steps from the [Pre-deliverable Setup](../../pre-deliverable-setup/README.md#authentication)
+3. **Clone Repository**
+
+   

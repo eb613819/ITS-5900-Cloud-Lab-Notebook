@@ -73,7 +73,7 @@ I was able to authenticate on the gHost by following these steps (after getting 
    ```
 4. Confirm it worked:
    ```bash
-   gh repo view OHIO-ECT/Lab-Notebook-Cheat-Sheet
+   gh auth status
    ```
    
 ---

@@ -22,7 +22,12 @@ The purpose of this deliverable is to
    - [Create Directory](#create-directory)
    - [Clone Repository](#clone-repository)
 - [Task 2 - Build an SSH key](#task-2)
-
+   - [Generate the SSH Key](#generate-the-ssh-key)
+   - [Start the SSH Agent](#start-the-ssh-agent)
+   - [Add the SSH Key to the Agent](#add-the-ssh-key-to-the-agent)
+   - [Verify the Key is Loaded](#verify-the-key-is-loaded)
+   - [Start SSH Agent Automatically on Login](#start-ssh-agent-automatically-on-login)
+  
 ---
 
 <a id="task-1"></a>

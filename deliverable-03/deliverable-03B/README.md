@@ -493,6 +493,7 @@ Ansible playbooks are run using `ansible-playbook`. The test playbook is called 
 ```bash
 ansible-playbook azure-subscription-info.yml
 ```
+**Note**: Ansible has a three-level verbosity switch: `-v`, `-vv`, or `-vvv` that can be helpful for debugging.
 This playbook runs locally and:
 - Verifies that the Azure CLI is installed.
 - Retrieves and displays the currently active Azure subscription (name, ID, and tenant ID).

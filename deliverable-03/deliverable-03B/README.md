@@ -586,5 +586,37 @@ This playbook uses the conditional statement `when` to control task execution. F
   when: allowed_regions is not defined or allowed_regions | length == 0
   ```
 
-  #### Proposed Looping Task
-  
+#### Proposed Looping Task
+I propose we loop through the `allowed_regions` array and print them individually to make them more readable. This can be done with the `loop` option. Here is the updated `Print policy-restricted regions for this subscription` task:
+```yaml
+    - name: Print policy-restricted regions for this subscription
+      ansible.builtin.debug:
+        msg: "Policy-allowed region: {{ item }}"
+      loop: "{{ allowed_regions }}"
+      when: allowed_regions is defined and allowed_regions | length > 0
+```
+**Note**: for the loop to work, we will have to flatten `allowed_regions` when it is parsed since it is actually a nested list:
+```yaml
+ansible.builtin.set_fact:
+        allowed_regions: "{{ policy_raw.stdout | from_json |flatten }}"
+```
+
+This task outputs the following:
+```console
+TASK [Print policy-restricted regions for this subscription] **********************************************************
+ok: [localhost] => (item=northcentralus) => {
+    "msg": "Policy-allowed region: northcentralus"
+}
+ok: [localhost] => (item=westus3) => {
+    "msg": "Policy-allowed region: westus3"
+}
+ok: [localhost] => (item=eastus2) => {
+    "msg": "Policy-allowed region: eastus2"
+}
+ok: [localhost] => (item=southcentralus) => {
+    "msg": "Policy-allowed region: southcentralus"
+}
+ok: [localhost] => (item=mexicocentral) => {
+    "msg": "Policy-allowed region: mexicocentral"
+}
+```

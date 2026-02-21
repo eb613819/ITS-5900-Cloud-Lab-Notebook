@@ -27,6 +27,7 @@ The purpose of this deliverable is to
    - [Add the SSH Key to the Agent](#add-the-ssh-key-to-the-agent)
    - [Verify the Key is Loaded](#verify-the-key-is-loaded)
    - [Start SSH Agent Automatically on Login](#start-ssh-agent-automatically-on-login)
+- [Task 3 - New Tofu Configurations](#task-3)
   
 ---
 
@@ -72,6 +73,8 @@ Authorize in your web browser:  https://github.com/enterprises/ohiouniversity/ss
      
 Then try cloning the repo again.
 
+---
+
 <a id="task-2"></a>
 ## Task 2 - Build an SSH Key
 We will generate an SSH key to securely access the virtual machines provisioned by Tofu, eliminating the need for password-based authentication.
@@ -86,6 +89,8 @@ ssh-keygen -t ed25519 -C "itsclass"
   
 **Note**: Use the default file location when prompted and give it a passphrase that you can remember.
 
+A success will show the key's randomart image.
+
 ### Start the SSH Agent
 Start the SSH agent and set the necessary environment variables:
 ```bash
@@ -93,6 +98,11 @@ eval $(ssh-agent -s)
 ```
 - `eval` executes the output of the command in the current shell
 - `ssh-agent -s` starts the SSH agent and outputs the environment variables
+
+If successful, the agent PID will show:
+```bash
+Agent pid 2880398
+```
 
 ### Add the SSH Key to the Agent
 Add the generated private key to the running SSH agent:
@@ -102,6 +112,11 @@ ssh-add ~/.ssh/id_ed25519
 - `ssh-add` loads a private key into the SSH agent
 - `~/.ssh/id_ed25519` is the default private key generated earlier
 
+This will prompt for the key's passphrase, then add it to the agent:
+```bash
+Identity added: /home/itsvm/.ssh/id_ed25519 (itsclass)
+```
+
 ### Verify the Key is Loaded
 To confirm the key was successfully added:
 ```bash
@@ -109,7 +124,7 @@ ssh-add -l
 ```
 - `-l` lists the fingerprints of all loaded keys
 
-If successful, you should see your key fingerprint displayed.
+If successful, you should see the key's fingerprint displayed.
 
 ### Start SSH Agent Automatically on Login
 So that we do not have to manually start the SSH agent on every login, we can append the commands to `.bashrc`:
@@ -126,4 +141,9 @@ EOF
 - `cat >> ~/.bashrc` appends content to your shell configuration file
 - The conditional checks whether the SSH agent is already running
 - If not, it starts the agent and loads your key
+
+---
+
+<a id="task-3"></a>
+## Task 3 - New Tofu Configurations
 

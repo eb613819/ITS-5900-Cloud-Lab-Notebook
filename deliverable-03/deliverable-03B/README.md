@@ -28,7 +28,20 @@ The purpose of this deliverable is to
    - [Verify the Key is Loaded](#verify-the-key-is-loaded)
    - [Start SSH Agent Automatically on Login](#start-ssh-agent-automatically-on-login)
 - [Task 3 - New Tofu Configurations](#task-3)
-  
+   - [Providers](#providers)
+      - [Terraform Block](#terraform-block)
+      - [Azure Provider Block](#azure-provider-block)
+   - [Resource Group](#resource-group)
+   - [Virtual Network](#virtual-network)
+   - [Subnet](#subnet)
+   - [Public IP](#public-ip)
+   - [Network Security Group](#network-security-group)
+   - [Network Interface](#network-interface)
+      - [NIC Creation](#nic-creation)
+      - [Connection to Network Security Group](#connection-to-network-security-group)
+   - [Virtual Machine](#virtual-machine)
+   - [Outputs](#outputs)
+
 ---
 
 <a id="task-1"></a>
@@ -146,4 +159,195 @@ EOF
 
 <a id="task-3"></a>
 ## Task 3 - New Tofu Configurations
+A `~/Cloud/ITS-4900-Cloud-Release/Deliverable_3/Task3/main.tf` file is provided for the deliverable. `main.tf` defines all the Azure resources that will be provisioned. Each component in the provided `main.tf` is outlined below.
+**Note**: User-specific changes will need to be made before this `main.tf` is usable.
 
+### Providers
+#### Terraform Block
+The Terraform block defines which provider should be used and the required version.
+```hcl
+# Specify the required provider and version
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 4.0"
+    }
+  }
+}
+```
+- `source` tells Tofu to use the official Azure provider from HashiCorp
+- `version = "~> 4.0"` ensures compatibility with version 4.x
+
+This ensures Tofu downloads and uses the correct Azure provider plugin.
+
+#### Azure Provider Block
+This block configures how Tofu connects to Azure.
+```hcl
+# Configure the Azure Provider
+provider "azurerm" {
+  features {}
+  subscription_id = "REDACTED"
+}
+```
+- `features {}` is required by the Azure provider
+- `subscription_id` specifies which Azure subscription resources will be created in. The instructor's subscription ID was provided in the file, but it will have to be changed before running.
+
+This allows Tofu to authenticate and provision resources in the correct Azure subscription.
+
+### Resource Group
+The resource group acts as a logical container for all Azure resources created by this configuration.
+```hcl
+# Create a resource group
+resource "azurerm_resource_group" "main" {
+  name     = "its-cloud-del2b"
+  location = "westus2"
+}
+```
+This creates a resource group named `its-cloud-del2b` in `westus2`. The name should be changed to match this deliverable, and the location should be changed to one that the user has access to.
+
+### Virtual Network
+The virtual network provides isolated networking for Azure resources and is required by Azure.
+```hcl
+# Virtual network (required by Azure)
+resource "azurerm_virtual_network" "main" {
+  name                = "vnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+}
+```
+**Note**: `location` and `resource_group_name` need to be consistent with the created resource group.
+
+### Subnet
+The subnet defines a smaller address range inside the virtual network and is also required by Azure.
+```hcl
+# Subnet (required by Azure)
+resource "azurerm_subnet" "main" {
+  name                 = "subnet"
+  resource_group_name  = azurerm_resource_group.main.name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes     = ["10.0.1.0/24"]
+}
+```
+**Note**: `resource_group_name` and `virtual_network_name` need to match the previously created components.
+
+### Public IP
+The publice IP is very important because it allows external access to the virtual machine.
+```hcl
+# Public IP
+resource "azurerm_public_ip" "main" {
+  name                = "del01-testvm-wus2-0101"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+```
+- `allocation_method = "Static"` ensures the IP does not change
+- `sku = "Standard"` and `allocation_method = "Static"` are required for student Azure subscriptions
+**Note**: `resource_group_name` and `location` need to match the previously created components.
+  
+### Network Security Group
+The network security group controls inbound and outbound traffic rules. We need to open port 22 to allow us to SSH into the machine.
+```hcl
+# Network Security Group with SSH open
+resource "azurerm_network_security_group" "main" {
+  name                = "nsg"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+
+  security_rule {
+    name                       = "SSH"
+    priority                   = 1001
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+```
+**Note**: `resource_group_name` and `location` need to match the previously created components.
+
+### Network Interface
+#### NIC Creation
+The network interface connects the virtual machine to the subnet and public IP.
+```hcl
+# Network interface (required by Azure)
+resource "azurerm_network_interface" "main" {
+  name                = "nic"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.main.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.main.id
+  }
+}
+```
+**Note**: `location`, `resource_group_name`, `subnet_id`, and `public_ip_address_id` need to match the previously created components. 
+
+#### Connection to Network Security Group
+This connects the network security group to the network interface.
+```hcl
+# Connect NSG to NIC
+resource "azurerm_network_interface_security_group_association" "main" {
+  network_interface_id      = azurerm_network_interface.main.id
+  network_security_group_id = azurerm_network_security_group.main.id
+}
+```
+This ensures the SSH rule is actually applied to the VM’s network interface.
+**Note**: `network_interface_id` and `network_security_group_id` need to match the previously created components. 
+
+### Virtual Machine
+This block provisions the actual virtual machine.
+```hcl
+# Virtual machine
+resource "azurerm_linux_virtual_machine" "main" {
+  name                            = "del01-testvm-wus2-01"
+  resource_group_name             = azurerm_resource_group.main.name
+  location                        = azurerm_resource_group.main.location
+  size                            = "Standard_B2pts_v2"
+  admin_username                  = "REDACTED"
+  admin_password                  = "REDACTED"
+  disable_password_authentication = false
+  
+  network_interface_ids = [
+    azurerm_network_interface.main.id,
+  ]
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "ubuntu-24_04-lts"
+    sku       = "server-arm64"
+    version   = "latest"
+  }
+}
+```
+**Note**: `location`, `resource_group_name`, and `network_interface_ids` need to match the previously created components.
+**IMPORTANT**: the admin username and password were provided directly in the file. This is not a safe practice. This could be fixed using variables.
+
+### Outputs
+Outputs display useful information,
+```hcl
+output "public_ip_address" {
+  value = azurerm_public_ip.main.ip_address
+}
+```
+Displays the public IP address of the VM.
+```hcl
+output "ssh_connection" {
+  value = "ssh azureuser@${azurerm_public_ip.main.ip_address}"
+}
+```
+Prints a ready-to-use SSH command. However, the username does not match the value of `admin_username` provided in the VM block, so this command will not work.

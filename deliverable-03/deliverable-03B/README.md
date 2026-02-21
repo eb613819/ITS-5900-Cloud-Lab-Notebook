@@ -489,11 +489,10 @@ cd `~/Cloud/ITS-4900-Cloud-Release/Deliverable_3/Task_4/`
 ```
 
 #### Run the Test Playbook
-Ansible playbooks are run using `ansible-playbook`. The test playbook is called `azure-subscription-info.yml`. We can run it using:
+Ansible playbooks are run using `ansible-playbook`. The test playbook is called `azure-subscription-info.yml`. We can run it using the following command. **Note**: Ansible has a three-level verbosity switch: `-v`, `-vv`, or `-vvv` that can be helpful for debugging.
 ```bash
 ansible-playbook azure-subscription-info.yml
 ```
-**Note**: Ansible has a three-level verbosity switch: `-v`, `-vv`, or `-vvv` that can be helpful for debugging.
 This playbook runs locally and:
 - Verifies that the Azure CLI is installed.
 - Retrieves and displays the currently active Azure subscription (name, ID, and tenant ID).

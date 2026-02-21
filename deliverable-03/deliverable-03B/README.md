@@ -455,3 +455,135 @@ I destroyed all created resources using the following command.
 ```bash
 tofu destroy
 ```
+
+---
+
+<a id="task-4"></a>
+## Task 4 - Ansible Initialization
+### Install Ansible
+When installing software on the gHost, we want to be careful to not run full system updates; that can make them unstable and force instructors to reset the gHost to a known good state. We can safely install Ansible on the gHost with the following command:
+```bash
+sudo add-apt-repository --yes --update ppa:ansible/ansible
+sudo apt update
+sudo apt install -y ansible software-properties-common python-is-python3 python3-pip python3-tabulate python3-lxml
+
+pip install pydantic==1.9 --break-system-packages
+```
+
+### Test the Ansible Configuration
+After installing Ansible, we want to test that it works. `~/Cloud/ITS-4900-Cloud-Release/Deliverable_3/Task_4/` has an Ansible playbook we can test.
+
+#### Move to Task 4 Folder
+```bash
+cd `~/Cloud/ITS-4900-Cloud-Release/Deliverable_3/Task_4/`
+
+#### Run the Test Playbook
+Ansible playbooks are run using `ansible-playbook`. The test playbook is called `azure-subscription-info.yml`. We can run it using:
+```bash
+ansible-playbook azure-subscription-info.yml
+```
+This playbook runs locally and:
+- Verifies that the Azure CLI is installed.
+- Retrieves and displays the currently active Azure subscription (name, ID, and tenant ID).
+- Checks Azure Policy assignments to determine if the subscription has restricted/allowed regions.
+- Prints the list of policy-allowed regions if found, or warns if no location restrictions are detected.
+
+After running the playbook, it will output something like:
+```console
+[WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
+
+PLAY [Azure subscription and regions info] ****************************************************************************
+
+TASK [Check Azure CLI is installed] ***********************************************************************************
+changed: [localhost]
+
+TASK [Fail if Azure CLI not found] ************************************************************************************
+skipping: [localhost]
+
+TASK [Get current subscription] ***************************************************************************************
+changed: [localhost]
+
+TASK [Parse subscription JSON] ****************************************************************************************
+ok: [localhost]
+
+TASK [Print subscription summary] *************************************************************************************
+ok: [localhost] => {
+    "msg": [
+        "Subscription Name: Azure for Students",
+        "Subscription ID: REDACTED",
+        "Tenant ID: REDACTED"
+    ]
+}
+
+TASK [Get allowed locations from Azure policy assignments] ************************************************************
+changed: [localhost]
+
+TASK [Parse allowed locations from policy] ****************************************************************************
+ok: [localhost]
+
+TASK [Print policy-restricted regions for this subscription] **********************************************************
+ok: [localhost] => {
+    "msg": "Policy-allowed regions (1): ['northcentralus', 'westus3', 'eastus2', 'southcentralus', 'mexicocentral']"
+}
+
+TASK [Warn if no policy location restrictions found] ******************************************************************
+skipping: [localhost]
+
+PLAY RECAP ************************************************************************************************************
+localhost                  : ok=7    changed=3    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0
+```
+
+### Identify Programming Concepts
+#### Variables
+This playbook stores output in variables using the `register` option. Variables set in this way include `az_check`, `subscription_raw`, and `policy_raw`.
+For example, here is where `az_check` is set:
+```yaml
+   - name: Check Azure CLI is installed
+      ansible.builtin.command:
+        cmd: az --version
+      register: az_check
+      ignore_errors: true
+```
+The playbook also uses `set_fact` to create variables like `subscription` and `allowed_regions`. For example, here is where `subscription` is set:
+```yaml
+   - name: Parse subscription JSON
+      ansible.builtin.set_fact:
+        subscription: "{{ subscription_raw.stdout | from_json }}"
+```
+
+#### Variable Manipulation
+This playbook uses variable manipulation to transform and process data using Jinja2 filters. For example:
+- Parsing JSON:
+  ```yaml
+  subscription: "{{ subscription_raw.stdout | from_json }}"
+  ```
+- Handling missing values:
+  ```yaml
+  {{ subscription.name | default('N/A') }}
+  ```
+- Processing lists:
+  ```yaml
+  {{ allowed_regions | join(', ') }}
+  ```
+
+#### Conditional Statements
+This playbook uses the conditional statement `when` to control task execution. For example:
+- Fail if Azure CLI is missing:
+  ```yaml
+  when: az_check.rc != 0
+  ```
+- Only parse the policy data if the command succeeded:
+  ```yaml
+  when: policy_raw.rc == 0 and policy_raw.stdout | length > 0
+  ```
+- Print messages based on whether regions were found:
+  ```yaml
+  when: allowed_regions is defined and allowed_regions | length > 0
+  ```
+  AND
+  ```yaml
+  when: allowed_regions is not defined or allowed_regions | length == 0
+  ```
+
+  #### Proposed Looping Task
+  

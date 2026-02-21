@@ -476,6 +476,7 @@ After installing Ansible, we want to test that it works. `~/Cloud/ITS-4900-Cloud
 #### Move to Task 4 Folder
 ```bash
 cd `~/Cloud/ITS-4900-Cloud-Release/Deliverable_3/Task_4/`
+```
 
 #### Run the Test Playbook
 Ansible playbooks are run using `ansible-playbook`. The test playbook is called `azure-subscription-info.yml`. We can run it using:

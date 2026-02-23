@@ -1,7 +1,15 @@
 # Deliverable 3B - Ansible Automation
 
 ## Objective
-The purpose of this deliverable is to 
+The purpose of this deliverable is to demonstrate cloud automation using OpenTofu and Ansible. The goal is to eliminate manual server configuration by creating a repeatable, automated workflow that:
+- Provisions networking and compute resources in Azure
+- Secures access using SSH key authentication
+- Configures a Linux virtual machine as a web server
+- Deploys dynamic web content
+- Enhances the server with PHP support
+- Demonstrates secure network rule configuration
+- Validates connectivity and service availability
+- Cleans up all resources safely
 
 ---
 
@@ -283,7 +291,7 @@ resource "azurerm_subnet" "main" {
 **Note**: `resource_group_name` and `virtual_network_name` need to match the previously created components.
 
 ### Public IP
-The publice IP is very important because it allows external access to the virtual machine.
+The public IP is very important because it allows external access to the virtual machine.
 ```hcl
 # Public IP
 resource "azurerm_public_ip" "main" {
@@ -664,7 +672,7 @@ ok: [localhost] => (item=mexicocentral) => {
 
 <a id="task-5"></a>
 ## Task 5 - Automation From Start to Finish
-A partial Tofu/Ansible project was provided in `Deliverable_3/Task_5`. We need to complete the project and personalize the files with out user-specific details.
+A partial Tofu/Ansible project was provided in `Deliverable_3/Task_5`. We need to complete the project and personalize the files with our user-specific details.
 
 ### Project Structure
 The provided project is structured as follows:
@@ -708,7 +716,7 @@ sed -i "s|subscription_id.*=.*|subscription_id      = \"$(az account show --quer
 #### Change Location
 We must manually change the `location` value in `account.auto.tfvars` to a region compatible with out Azure account. I chose `northcentralus`.
 
-### Infrastucture Provisioning
+### Infrastructure Provisioning
 The provided OpenTofu files will create Azure infrastructure. We can understand what will be created by inspecting the files.
 
 #### `variables-account.tf`
@@ -759,7 +767,7 @@ This file also generates output after deployment:
 - Web URL using the VM's FQDN
 
 #### Provision the Infrastructure
-We can create the infrastructure by first initializing `/Task_5`as a working directory:
+We can create the infrastructure by first initializing `/Task_5` as a working directory:
 ```bash
 cd ~/Cloud/ITS-4900-Cloud-Release/Deliverable_3/Task_5
 tofu init
@@ -770,7 +778,7 @@ tofu plan
 ```
 Then executing the plan:
 ```bash
-tofu execute
+tofu apply
 ```
 If everything works, the infrastructure will be created and the outputs will be printed:
 ```console

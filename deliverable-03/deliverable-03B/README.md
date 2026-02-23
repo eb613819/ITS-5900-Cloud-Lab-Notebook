@@ -61,7 +61,26 @@ The purpose of this deliverable is to
       - [Conditional Statements](#conditional-statements)
       - [Proposed Looping Task](#proposed-looping-task)
 - [Task 5 - Automation From Start to Finish](#task-5)
-
+   - [Project Structure](#project-structure)
+   - [Update File Values](#update-file-values)
+      - [Load SSH Key](#load-ssh-key)
+      - [Load Subscription ID](#load-subscription-id)
+      - [Change Location](#change-location)
+   - [Infrastructure Provisioning](#infrastructure-provisioning)
+      - [`variables-account.tf`](#variables-accounttf)
+      - [`variables-project.tf`](#variables-projecttf)
+      - [`main.tf`](#maintf)
+      - [Provision the Infrastructure](#provision-the-infrastructure)
+   - [Infrastructure Configuring](#infrastructure-configuring)
+      - [`inventory.yml`](#inventoryyml)
+      - [`configuration.yml`](#configurationyml)
+      - [Configure the Infrastructure](#configure-the-infrastructure)
+   - [Accessing the Provisioned and Configured Infrastructure](#accessing-the-provisioned-and-configured-infrastructure)
+      - [Allow HTTP Access](#allow-http-access)
+      - [Access the Web Server](#access-the-web-server)
+      - [Improve Security](#improve-security)
+   - [Clean Up](#clean-up)
+     
 ---
 
 <a id="task-1"></a>
@@ -712,7 +731,7 @@ This file describes what resources will be created:
 - Linux Virtual Machine
 
 This file also generates local automation resources:
-- **Ansible Inventory File** (`inventory,yml`) - A YAML inventory file containing:
+- **Ansible Inventory File** (`inventory.yml`) - A YAML inventory file containing:
    - The VM’s public IP
    - The configured admin username
    - Python interpreter path
@@ -884,7 +903,7 @@ This is because we only opened the SSH port, and not the HTTP port.
 #### Allow HTTP Access
 We can allow HTTP access by adding a new `security_rule` to `azurerm_network_security_group` in `main.tf` that opens port 80 (HTTP). **Note**: each rule needs a unique priority (lower numbers are evaluated first).
 ```hcl
-security_rule {
+  security_rule {
     name                       = "HTTP"
     priority                   = 1002
     direction                  = "Inbound"
@@ -908,5 +927,39 @@ Now that port 80 is allowing inbound traffic, we can access the hosted web page:
 curl -I http://20.25.210.242
 ```
 ```console
+HTTP/1.1 200 OK
+Server: nginx/1.24.0 (Ubuntu)
+Date: Mon, 23 Feb 2026 09:50:58 GMT
+Content-Type: text/html
+Content-Length: 129
+Last-Modified: Mon, 23 Feb 2026 09:29:38 GMT
+Connection: keep-alive
+ETag: "699c1e02-81"
+Accept-Ranges: bytes
+```
 
+#### Improve Security
+We can improve SSH security by limiting access to Ohio University and home residence IP ranges:
+```hcl
+  security_rule {
+    name                       = "SSH"
+    priority                   = 1001
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefixes    = [
+      "132.235.0.0/16",   # Ohio University
+      "64.247.64.0/18",   # Ohio University
+      "75.188.104.149/32" # Home
+    ]
+    destination_address_prefix = "*"
+  }
+```
+
+### Clean Up
+We can clean up all created resources using:
+```bash
+tofu destroy
 ```

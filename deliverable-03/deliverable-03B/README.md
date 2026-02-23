@@ -81,6 +81,14 @@ The purpose of this deliverable is to
       - [Improve Security](#improve-security)
    - [Clean Up](#clean-up)
 - [Task 6 - Extending the Network](#task-6)
+   - [`configuration.yml` Changes](#configurationyml-changes)
+      - [Add PHP Install](#add-php-install)
+      - [Start and Enable PHP](#start-and-enable-php)
+      - [Configure NGINX to Process PHP Files](#configure-nginx-to-process-php-files)
+      - [Deploy `index.php`](#deploy-indexphp)
+      - [Handler](#handler)
+   - [Access the PHP Web Page](#access-the-php-web-page)
+   - [Clean Up Resources](#clean-up-resources)
        
 ---
 
@@ -969,3 +977,112 @@ tofu destroy
 
 <a id="task-6"></a>
 ## Task 6 - Extending the Network
+Now that we have a working web server that is provisioned, configured, and accessible, we want to enhance it to use PHP. We can do this by changing the Ansible `configuration.yml` file.
+
+### `configuration.yml` Changes
+The following sections are changes we made to `configuration.yml` to generate and serve an `index.php`.
+
+#### Add PHP Install
+We can add the PHP installation to the task that also installs NGINX:
+```yaml
+    - name: Update apt cache and install NGINX and PHP
+      ansible.builtin.apt:
+        name: 
+          - nginx
+          - php-fpm
+          - php-cli
+        state: present
+        update_cache: true
+```
+
+#### Start and Enable PHP
+We can add a task to start PHP and enable it at boot:
+```yaml
+    - name: Ensure PHP-FPM is started and enabled
+      ansible.builtin.service:
+        name: php8.3-fpm
+        state: started
+        enabled: true
+```
+
+#### Configure NGINX to Process PHP Files
+We must configure NGINX to process PHP files using the task below:
+```yaml
+    - name: Configure NGINX to process PHP files
+      ansible.builtin.copy:
+        dest: /etc/nginx/sites-available/default
+        content: |
+          server {
+              listen 80 default_server;
+              listen [::]:80 default_server;
+
+              root /var/www/html;
+              index index.php index.html;
+
+              server_name _;
+
+              location / {
+                  try_files $uri $uri/ =404;
+              }
+
+              location ~ \.php$ {
+                  include snippets/fastcgi-php.conf;
+                  fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+              }
+
+              location ~ /\.ht {
+                  deny all;
+              }
+          }
+      notify: Restart nginx
+```
+
+#### Deploy `index.php`
+Now we can deploy a hello world `index.php`:
+```yaml
+    - name: Deploy index.php with server hostname
+      ansible.builtin.copy:
+        dest: /var/www/html/index.php
+        owner: www-data
+        group: www-data
+        mode: "0644"
+        content: |
+          <?php
+          echo "<h1>Hello World from {{ ansible_facts['hostname'] }}</h1>";
+          ?>
+```
+
+#### Handler
+Finally, we have a handler task at the end that is triggered by the NGINX configuration task:
+```yaml
+  handlers:
+    - name: Restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+```
+This allows us to restart NGINX.
+
+### Access the PHP Web Page
+After reprovisioning and configuring the infrastructure, we can now access the PHP web page at the VM's IP address:
+```bash
+curl -I http://20.80.36.30
+curl http://20.80.36.30
+```
+```console
+HTTP/1.1 200 OK
+Server: nginx/1.24.0 (Ubuntu)
+Date: Mon, 23 Feb 2026 20:51:37 GMT
+Content-Type: text/html; charset=UTF-8
+Connection: keep-alive
+
+<h1>Hello World from del0305-testvm-01</h1>
+```
+
+### Clean Up Resources
+We can clean up all of the resources using the following command:
+```bash
+tofu destroy
+```
+
+---

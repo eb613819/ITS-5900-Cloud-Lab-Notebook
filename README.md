@@ -8,31 +8,39 @@ Each lab/deliverable is documented in its own directory using Markdown files tha
 ```bash
 ITS-5900-Cloud-Lab-Journal/
 ├── README.md
+│
 ├── pre-deliverable-setup/
 │   ├── README.md
 │   ├── /images
 │   ├── /scripts
 │   └── del01_submission_evanB.md
+│
 ├── deliverable-01/
 │   ├── README.md
 │   └── /images
+│
 ├── deliverable-02/
 │   ├── deliverable-02A/
 │   │   └── README.md
+│   │
 │   └── deliverable-02B/
 │       ├── README.md
 │       └── /src
 │           ├── main.tf
 │           ├── providers.tf
 │           └── variables.tf
+│
 ├── deliverable-03/
 │   ├── deliverable-03A/
 │   │   └── README.md
+│   │
 │   └── deliverable-03B/
 |       ├── README.md
 |       └── /src
+│
 ├── midterm-project/
 │   └── README.md
+│
 └── .gitignore
 ```
 

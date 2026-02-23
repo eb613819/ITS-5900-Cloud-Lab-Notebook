@@ -1,0 +1,55 @@
+---
+- name: Azure subscription and regions info
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Check Azure CLI is installed
+      ansible.builtin.command:
+        cmd: az --version
+      register: az_check
+      ignore_errors: true
+
+    - name: Fail if Azure CLI not found
+      ansible.builtin.fail:
+        msg: "Azure CLI not found. Install and login with 'az login' before running this playbook."
+      when: az_check.rc != 0
+
+    - name: Get current subscription
+      ansible.builtin.command:
+        cmd: az account show --output json
+      register: subscription_raw
+
+    - name: Parse subscription JSON
+      ansible.builtin.set_fact:
+        subscription: "{{ subscription_raw.stdout | from_json }}"
+
+    - name: Print subscription summary
+      ansible.builtin.debug:
+        msg:
+          - "Subscription Name: {{ subscription.name | default('N/A') }}"
+          - "Subscription ID: {{ subscription.id | default('N/A') }}"
+          - "Tenant ID: {{ subscription.tenantId | default('N/A') }}"
+
+    - name: Get allowed locations from Azure policy assignments
+      ansible.builtin.command:
+        cmd: az policy assignment list --query "[].parameters.listOfAllowedLocations.value" --output json
+      register: policy_raw
+      ignore_errors: true
+
+    - name: Parse allowed locations from policy
+      ansible.builtin.set_fact:
+        allowed_regions: "{{ policy_raw.stdout | from_json | flatten }}"
+      when: policy_raw.rc == 0 and policy_raw.stdout | length > 0
+
+    - name: Print policy-restricted regions for this subscription
+      ansible.builtin.debug:
+        msg: "Policy-allowed region: {{ item }}"
+      loop: "{{ allowed_regions }}"
+      when: allowed_regions is defined and allowed_regions | length > 0
+
+    - name: Warn if no policy location restrictions found
+      ansible.builtin.debug:
+        msg: "No Azure Policy location restrictions found - all regions may be available, or policy assignments use different parameter names."
+      when: allowed_regions is not defined or allowed_regions | length == 0

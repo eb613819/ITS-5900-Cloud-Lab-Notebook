@@ -1,0 +1,71 @@
+---
+- name: Configure the Server
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Update apt cache and install NGINX and PHP
+      ansible.builtin.apt:
+        name: 
+          - nginx
+          - php-fpm
+          - php-cli
+        state: present
+        update_cache: true
+
+    - name: Ensure NGINX is started and enabled at boot
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Ensure PHP-FPM is started and enabled
+      ansible.builtin.service:
+        name: php8.3-fpm
+        state: started
+        enabled: true
+
+    - name: Configure NGINX to process PHP files
+      ansible.builtin.copy:
+        dest: /etc/nginx/sites-available/default
+        content: |
+          server {
+              listen 80 default_server;
+              listen [::]:80 default_server;
+
+              root /var/www/html;
+              index index.php index.html;
+
+              server_name _;
+
+              location / {
+                  try_files $uri $uri/ =404;
+              }
+
+              location ~ \.php$ {
+                  include snippets/fastcgi-php.conf;
+                  fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+              }
+
+              location ~ /\.ht {
+                  deny all;
+              }
+          }
+      notify: Restart nginx
+
+    - name: Deploy index.php with server hostname
+      ansible.builtin.copy:
+        dest: /var/www/html/index.php
+        owner: www-data
+        group: www-data
+        mode: "0644"
+        content: |
+          <?php
+          echo "<h1>Hello World from {{ ansible_facts['hostname'] }}</h1>";
+          ?>
+
+  handlers:
+    - name: Restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted

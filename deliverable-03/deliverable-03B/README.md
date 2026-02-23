@@ -639,7 +639,7 @@ ok: [localhost] => (item=mexicocentral) => {
 A partial Tofu/Ansible project was provided in `Deliverable_3/Task_5`. We need to complete the project and personalize the files with out user-specific details.
 
 ### Project Structure
-The provided project is structured as followed:
+The provided project is structured as follows:
 ```bash
 ~/Cloud/ITS-4900-Cloud-Release/
 └── Deliverable_3
@@ -653,11 +653,11 @@ The provided project is structured as followed:
         ├── variables-project.tf
         └── .gitignore
 ```
-- **`acount.auto.tfvars`** _(OpenTofu)_ – An automatically loaded variable definition file that provides values for variables declared in `variables-account.tf`. The variable names in this file must match the corresponding variable declarations in `variables-account.tf`. Files ending in `.auto.tfvars` are automatically loaded during `tofu plan` and `tofu apply` without needing to specify them on the command line.
-- **`ansible.cfg`** _(Ansible)_ – The main Ansible configuration file that controls default execution behavior, including inventory location, connection settings, privilege escalation options, and other runtime configurations.
-- **`configuration.yml`** _(Ansible)_ – An Ansible playbook that defines automation tasks to configure systems after infrastructure provisioning.
+- **`account.auto.tfvars`** _(OpenTofu)_ – An automatically loaded variable definition file that provides values for variables declared in `variables-account.tf`. The variable names in this file must match the corresponding variable declarations in `variables-account.tf`. Files ending in `.auto.tfvars` are automatically loaded during `tofu plan` and `tofu apply` without needing to specify them on the command line. [Reference Docs](https://developer.hashicorp.com/terraform/language/values/variables#variable-definitions-tfvars-files)
+- **`ansible.cfg`** _(Ansible)_ – The main Ansible configuration file that controls default execution behavior, including inventory location, connection settings, privilege escalation options, and other runtime configurations. [Reference Docs](https://docs.ansible.com/projects/ansible/latest/reference_appendices/config.html)
+- **`configuration.yml`** _(Ansible)_ – An Ansible playbook that defines automation tasks to configure systems after infrastructure provisioning. [Reference docs](https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_intro.html)
 - **`main.tf`** _(OpenTofu)_ – The primary infrastructure configuration file that defines Azure resources (such as resource groups, networking components, and virtual machines) to be created and managed.
-- **`project.auto.tfvars`** _(OpenTofu)_ – An automatically loaded variable definition file that supplies values for variables declared in `variables-project.tf`. The variable names must match those defined in `variables-project.tf`. This allows environment-specific configuration without modifying the core infrastructure code.
-- **`variables-account.tf`** _(OpenTofu)_ – A variable declaration file that defines account-related input variables. These variables must be assigned values through `.tfvars` files, environment variables, or CLI arguments before deployment.
-- **`variables-project.tf`** _(OpenTofu)_ – A variable declaration file that defines project-level input variables. These variables must be assigned values through `.tfvars` files, environment variables, or CLI arguments before deployment.
+- **`project.auto.tfvars`** _(OpenTofu)_ – An automatically loaded variable definition file that supplies values for variables declared in `variables-project.tf`. The variable names must match those defined in `variables-project.tf`. This allows environment-specific configuration without modifying the core infrastructure code. [Reference Docs](https://developer.hashicorp.com/terraform/language/values/variables#variable-definitions-tfvars-files)
+- **`variables-account.tf`** _(OpenTofu)_ – A variable declaration file that defines account-related input variables. These variables must be assigned values through `.tfvars` files, environment variables, or CLI arguments before deployment. [Reference Docs](https://developer.hashicorp.com/terraform/language/values/variables#variable-definitions-tfvars-files)
+- **`variables-project.tf`** _(OpenTofu)_ – A variable declaration file that defines project-level input variables. These variables must be assigned values through `.tfvars` files, environment variables, or CLI arguments before deployment. [Reference Docs](https://developer.hashicorp.com/terraform/language/values/variables#variable-definitions-tfvars-files)
 - **`.gitignore`** _(Git)_ – A Git configuration file that specifies which files and directories should not be tracked or committed to version control.

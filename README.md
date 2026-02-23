@@ -26,11 +26,13 @@ ITS-5900-Cloud-Lab-Journal/
 │           ├── providers.tf
 │           └── variables.tf
 ├── deliverable-03/
-│   └── deliverable-03A/
+│   ├── deliverable-03A/
 │   │   └── README.md
 │   └── deliverable-03B/
 |       ├── README.md
 |       └── /src
+├── midterm-project/
+│   └── README.md
 └── .gitignore
 ```
 

@@ -60,6 +60,7 @@ The purpose of this deliverable is to
       - [Variable Manipulation](#variable-manipulation)
       - [Conditional Statements](#conditional-statements)
       - [Proposed Looping Task](#proposed-looping-task)
+- [Task 5 - Automation From Start to Finish](#task-5)
 
 ---
 
@@ -633,3 +634,30 @@ ok: [localhost] => (item=mexicocentral) => {
 
 ---
 
+<a id="task-5"></a>
+## Task 5 - Automation From Start to Finish
+A partial Tofu/Ansible project was provided in `Deliverable_3/Task_5`. We need to complete the project and personalize the files with out user-specific details.
+
+### Project Structure
+The provided project is structured as followed:
+```bash
+~/Cloud/ITS-4900-Cloud-Release/
+└── Deliverable_3
+    └── Task_4
+        ├── account.auto.tfvars
+        ├── ansible.cfg
+        ├── configuration.yml
+        ├── main.tf
+        ├── project.auto.tfvars
+        ├── variables-account.tf
+        ├── variables-project.tf
+        └── .gitignore
+```
+- **`acount.auto.tfvars`** _(OpenTofu)_ – An automatically loaded variable definition file that provides values for variables declared in `variables-account.tf`. The variable names in this file must match the corresponding variable declarations in `variables-account.tf`. Files ending in `.auto.tfvars` are automatically loaded during `tofu plan` and `tofu apply` without needing to specify them on the command line.
+- **`ansible.cfg`** _(Ansible)_ – The main Ansible configuration file that controls default execution behavior, including inventory location, connection settings, privilege escalation options, and other runtime configurations.
+- **`configuration.yml`** _(Ansible)_ – An Ansible playbook that defines automation tasks to configure systems after infrastructure provisioning.
+- **`main.tf`** _(OpenTofu)_ – The primary infrastructure configuration file that defines Azure resources (such as resource groups, networking components, and virtual machines) to be created and managed.
+- **`project.auto.tfvars`** _(OpenTofu)_ – An automatically loaded variable definition file that supplies values for variables declared in `variables-project.tf`. The variable names must match those defined in `variables-project.tf`. This allows environment-specific configuration without modifying the core infrastructure code.
+- **`variables-account.tf`** _(OpenTofu)_ – A variable declaration file that defines account-related input variables. These variables must be assigned values through `.tfvars` files, environment variables, or CLI arguments before deployment.
+- **`variables-project.tf`** _(OpenTofu)_ – A variable declaration file that defines project-level input variables. These variables must be assigned values through `.tfvars` files, environment variables, or CLI arguments before deployment.
+- **`.gitignore`** _(Git)_ – A Git configuration file that specifies which files and directories should not be tracked or committed to version control.

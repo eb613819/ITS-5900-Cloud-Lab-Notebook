@@ -27,7 +27,10 @@ ITS-5900-Cloud-Lab-Journal/
 │           └── variables.tf
 ├── deliverable-03/
 │   └── deliverable-03A/
-│       └── README.md
+│   │   └── README.md
+│   └── deliverable-03B/
+|       ├── README.md
+|       └── /src
 └── .gitignore
 ```
 

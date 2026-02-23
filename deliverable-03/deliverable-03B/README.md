@@ -80,7 +80,8 @@ The purpose of this deliverable is to
       - [Access the Web Server](#access-the-web-server)
       - [Improve Security](#improve-security)
    - [Clean Up](#clean-up)
-     
+- [Task 6 - Extending the Network](#task-6)
+       
 ---
 
 <a id="task-1"></a>
@@ -963,3 +964,8 @@ We can clean up all created resources using:
 ```bash
 tofu destroy
 ```
+
+---
+
+<a id="task-6"></a>
+## Task 6 - Extending the Network

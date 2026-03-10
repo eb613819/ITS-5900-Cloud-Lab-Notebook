@@ -6,7 +6,7 @@ Each lab/deliverable is documented in its own directory using Markdown files tha
 
 ## Repository structure
 ```bash
-ITS-5900-Cloud-Lab-Journal/
+ITS-5900-Cloud-Lab-Notebook/
 ├── README.md
 │
 ├── pre-deliverable-setup/

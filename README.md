@@ -38,8 +38,6 @@ ITS-5900-Cloud-Lab-Journal/
 |       ├── README.md
 |       └── /src
 │
-├── midterm-project/
-│   └── README.md
 │
 └── .gitignore
 ```

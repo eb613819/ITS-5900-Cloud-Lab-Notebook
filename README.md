@@ -10,14 +10,14 @@ ITS-5900-Cloud-Lab-Notebook/
 ├── README.md
 │
 ├── pre-deliverable-setup/
-│   ├── README.md
 │   ├── /images
-│   ├── /scripts
-│   └── del01_submission_evanB.md
+│   └── README.md
 │
 ├── deliverable-01/
+│   ├── /images
+│   ├── /scripts
 │   ├── README.md
-│   └── /images
+│   └── del01_submission_evanB.md
 │
 ├── deliverable-02/
 │   ├── deliverable-02A/
@@ -26,9 +26,6 @@ ITS-5900-Cloud-Lab-Notebook/
 │   └── deliverable-02B/
 │       ├── README.md
 │       └── /src
-│           ├── main.tf
-│           ├── providers.tf
-│           └── variables.tf
 │
 ├── deliverable-03/
 │   ├── deliverable-03A/
@@ -38,6 +35,8 @@ ITS-5900-Cloud-Lab-Notebook/
 |       ├── README.md
 |       └── /src
 │
+├── deliverable-04/
+│   └── README.md
 │
 └── .gitignore
 ```

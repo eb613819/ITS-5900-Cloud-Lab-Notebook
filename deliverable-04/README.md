@@ -34,8 +34,8 @@ FROM php:5.6-apache
 COPY index.php gennum.php subnets.html /var/www/html/
 COPY img/* /var/www/html/img/
 ```
-- **Base image**:
-- **What it does**:
+- **Base image**: `php:5.6-apache` — an official Docker image that bundles PHP 5.6 with the Apache web server on top of Debian
+- **What it does**: Copies the three application files (`index.php`, `gennum.php`, `subnets.html`) into Apache's web root, then copies all image assets from the `img/` directory into a matching subdirectory in the web root
 
 #### Build the Subnets Image
 We can build the image using:
@@ -43,9 +43,9 @@ We can build the image using:
 docker build ~/Cloud/subnets -t subnets:test
 ```
 where
-- `docker build`:
-- `~/Cloud/subnets`:
-- `-t subnets:test`:
+- `docker build`: builds a Docker image from a Dockerfile
+- `~/Cloud/subnets`: the build context. The context is the directory Docker sends to the daemon, and where it looks for the Dockerfile
+- `-t subnets:test`: tags the resulting image as `subnets:test` so it can be referenced by name instead of its SHA digest
 
 This should output:
 ```console
@@ -96,7 +96,10 @@ This should output:
  => => naming to docker.io/library/subnets:test                0.0s
 ```
 where
-- 
+- `[1/3]` is Docker pulling and extracting the layers of `php:5.6-apache` from Docker Hub, one `sha256` line per layer
+- `[2/3]` corresponds to the first `COPY` instruction in the Dockerfile
+- `[3/3]` corresponds to the second `COPY` instruction
+- The final lines write the finished image to local storage and apply the `subnets:test tag`
 
 #### Show Build History
 We can see the build history with:
@@ -148,7 +151,7 @@ docker inspect subnets:test --format '{{json .Config.ExposedPorts}}'
 ```console
 {"80/tcp":{}}
 ```
-The subnets Dockerfile does not need to repeat this declaration because it builds on the `php:5.6-apache` image.
+Port `80/tcp` is declared. The subnets Dockerfile does not need to repeat this declaration because all metadata from the base image, including `EXPOSE` directives, is carried forward into any image that uses `FROM php:5.6-apache`. Re-declaring it would be redundant.
 
 ### Task 1b - Copy-on-Write
 #### Start the Container
@@ -157,10 +160,11 @@ We can start the container with:
 docker run -d -p 5001:80 --name subnets-test subnets:test
 ```
 where
-- `docker run`:
-- `-d`:
-- `-p 5001:80`:
-- `--name subnets-test subnets:test`:
+- `docker run`: creates and starts a new container from an image
+- `-d`: detached mode — runs the container in the background and returns the terminal prompt immediately
+- `-p 5001:80`: publishes port `80` inside the container to port `5001` on the host, so `http://localhost:5001` reaches Apache inside the container
+- `--name subnets-test`: assigns the container the name `subnets-test` so it can be referenced by name in later commands
+- `subnets:test`: the image to run
   
 The application can be accessed at `http://localhost:5001`
 

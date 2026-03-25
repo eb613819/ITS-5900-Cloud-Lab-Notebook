@@ -366,3 +366,246 @@ IMAGE          ID             DISK USAGE   CONTENT SIZE   EXTRA
 subnets:dev    fb6d87c4c101        355MB             0B        
 subnets:test   5674b4a83c7f        355MB             0B        
 ```
+
+## Task 2 - Deploy with Infrastructure as Code
+### Setup
+#### Azure Login
+Check that the Azure CLI is authenticated and using the correct subscription:
+```bash
+az account show
+```
+If not, login then check again:
+```bash
+az login --use-device-code
+```
+
+#### Select Location
+The code fo this deliverable includes a script that queries your subscription for available Azure regions that support Container Apps and lets you choose one. It writes your selection to `.env` and to `account.auto.tfvars` so that both shell commands and OpenTofu use the same region:
+```bash
+cd ~/Cloud/ITS-4900-Cloud-Release/Deliverable_4
+bash select-location-containers.sh
+```
+```console
+Fetching Azure regions that support Azure Container Apps...
+
+
+Num   Region Name                  Display Name                        AZ Zones
+---   -----------                  ------------                        --------
+1     eastus                       East US                             3 zone(s)
+2     westus2                      West US 2                           3 zone(s)
+3     centralus                    Central US                          3 zone(s)
+4     canadacentral                Canada Central                      3 zone(s)
+
+Enter the number of your preferred region: 3
+
+Selected: Central US (centralus) — 3 availability zone(s)
+Subscription: <REDACTED>
+
+Written: /home/itsvm/Cloud/ITS-4900-Cloud-Release/Deliverable_4/.env
+Written: /home/itsvm/Cloud/ITS-4900-Cloud-Release/Deliverable_4/account.auto.tfvars
+
+Next step — load into your current shell:
+  source /home/itsvm/Cloud/ITS-4900-Cloud-Release/Deliverable_4/.env
+
+  LOCATION=centralus
+  SUBSCRIPTION_ID=<REDACTED>
+```
+**Note**: None of these regions are accessible with my subscription, which causes problems when running `tofu apply`. This is fixed in [Pick Correct Region](#pick-correct-region).
+
+#### Load Environment Variables
+We can then load the environment variables into the current shell:
+```bash
+source .env
+echo "Location: $LOCATION"
+echo "Subscription: $SUBSCRIPTION_ID"
+```
+```console
+Location: centralus
+Subscription: <REDACTED>
+```
+
+### Deploy to Azure
+#### Copy and Edit the Project Variables File
+```bash
+cd ~/Cloud/ITS-4900-Cloud-Release/Deliverable_4
+cp project.auto.tfvars.example project.auto.tfvars
+nano project.auto.tfvars
+```
+ACR (Azure Container Registry) is Microsoft's private Docker image store — similar to Docker Hub butcat inside your Azure subscription. The name must be globally unique across all of Azure. `acr_name` must be changed to something globally unique - I chose `ebrookssubnets`.
+
+#### Initialize and Apply
+```bash
+tofu init
+tofu apply
+```
+**Note**: `tofu apply` runs into two issues:
+- `centralus` isn't accessible by my subscription
+- My subscription is not registered for Container Apps
+
+These issues are fixed in the following sections.
+
+#### Pick Correct Region
+My subscription has access to regions `northcentralus`, `westus3`, `eastus2`, `southcentralus`,and `mexicocentral`. The location selection script did not give any of these as options. I used the following command to find which regions support Container Apps:
+```bash
+az provider show --namespace Microsoft.App --query "resourceTypes[?resourceType=='containerApps'].locations[]" -o tsv
+```
+Then, I picked one that my subscription has access to: `eastus2`. I fixed it using the following commands:
+```bash
+nano account.auto.tfvars  # change location = "eastus2"
+nano .env                 # change LOCATION="eastus2"
+source .env
+```
+
+#### Register for Container Apps
+My subscription was not registered for Container Apps, so I registered it using:
+```bash
+az provider register --namespace Microsoft.App
+```
+**Note**: This takes a couple minutes, but we can monitor it using:
+```bash
+az provider show --namespace Microsoft.App --query registrationState
+```
+Wait until it shows `"Registered"` to retry `Tofu Apply`
+
+#### Apply Again
+With the location correct and the subscription registered, we can reapply:
+```bash
+tofu apply
+```
+```console
+acr_login_server = "ebrookssubnets.azurecr.io"
+app_url = "https://subnets.salmonsand-3ff4ba62.eastus2.azurecontainerapps.io"
+log_analytics_workspace = "subnets-logs"
+resource_group_name = "deliverable-4"
+```
+
+#### Build and Push Image
+The included script `build-push.sh` will build the image from `~/Cloud/subnets-fork` and push it to ACR:
+```bash
+bash build-push.sh 1.0.0
+```
+**Note**: 1.0.0 is a semantic version tag
+```console
+ACR:     ebrookssubnets.azurecr.io
+Image:   ebrookssubnets.azurecr.io/subnets:1.0.0
+Source:  /home/itsvm/Cloud/subnets-fork
+
+Login Succeeded
+[+] Building 0.4s (8/8) FINISHED                     docker:default
+ => [internal] load build definition from Dockerfile           0.0s
+ => => transferring dockerfile: 156B                           0.0s
+ => [internal] load metadata for docker.io/library/php:5.6-ap  0.3s
+ => [internal] load .dockerignore                              0.0s
+ => => transferring context: 2B                                0.0s
+ => [1/3] FROM docker.io/library/php:5.6-apache@sha256:0a40fd  0.0s
+ => [internal] load build context                              0.0s
+ => => transferring context: 1.22kB                            0.0s
+ => CACHED [2/3] COPY index.php gennum.php subnets.html rando  0.0s
+ => CACHED [3/3] COPY img/* /var/www/html/img/                 0.0s
+ => exporting to image                                         0.0s
+ => => exporting layers                                        0.0s
+ => => writing image sha256:fb6d87c4c101904860916769d9dee2faa  0.0s
+ => => naming to ebrookssubnets.azurecr.io/subnets:1.0.0       0.0s
+The push refers to repository [ebrookssubnets.azurecr.io/subnets]
+14103ff4e191: Pushed 
+13360a9c8597: Pushed 
+1aab22401f12: Pushed 
+13ab94c9aa15: Pushed 
+588ee8a7eeec: Pushed 
+bebcda512a6d: Pushed 
+5ce59bfe8a3a: Pushed 
+d89c229e40ae: Pushed 
+9311481e1bdc: Pushed 
+4dd88f8a7689: Pushed 
+b1841504f6c8: Pushed 
+6eb3cfd4ad9e: Pushed 
+82bded2c3a7c: Pushed 
+b87a266e6a9c: Pushed 
+3c816b4ead84: Pushed 
+1.0.0: digest: sha256:e2795dc2037ef6f6d3c2bc5e966c8817a1264d325d31d10dbe6bbf6f74b59cd6 size: 3452
+The push refers to repository [ebrookssubnets.azurecr.io/subnets]
+14103ff4e191: Layer already exists 
+13360a9c8597: Layer already exists 
+1aab22401f12: Layer already exists 
+13ab94c9aa15: Layer already exists 
+588ee8a7eeec: Layer already exists 
+bebcda512a6d: Layer already exists 
+5ce59bfe8a3a: Layer already exists 
+d89c229e40ae: Layer already exists 
+9311481e1bdc: Layer already exists 
+4dd88f8a7689: Layer already exists 
+b1841504f6c8: Layer already exists 
+6eb3cfd4ad9e: Layer already exists 
+82bded2c3a7c: Layer already exists 
+b87a266e6a9c: Layer already exists 
+3c816b4ead84: Layer already exists 
+latest: digest: sha256:e2795dc2037ef6f6d3c2bc5e966c8817a1264d325d31d10dbe6bbf6f74b59cd6 size: 3452
+
+Pushed: ebrookssubnets.azurecr.io/subnets:1.0.0
+Pushed: ebrookssubnets.azurecr.io/subnets:latest
+
+Next step:
+  tofu -chdir=/home/itsvm/Cloud/ITS-4900-Cloud-Release/Deliverable_4 apply -var image_tag=1.0.0
+```
+
+#### Deploy to the Container App
+Now we can deploy the container:
+```bash
+tofu apply -var image_tag=1.0.0
+```
+```console
+Apply complete! Resources: 0 added, 1 changed, 0 destroyed.
+
+Outputs:
+
+acr_login_server = "ebrookssubnets.azurecr.io"
+app_url = "https://subnets.salmonsand-3ff4ba62.eastus2.azurecontainerapps.io"
+log_analytics_workspace = "subnets-logs"
+resource_group_name = "deliverable-4"
+```
+
+#### Check App
+If we go to the `app_url` - `https://subnets.salmonsand-3ff4ba62.eastus2.azurecontainerapps.io` we can check that both tools are live.
+I checked both:
+- `https://subnets.salmonsand-3ff4ba62.eastus2.azurecontainerapps.io/subnets.html`
+- `https://subnets.salmonsand-3ff4ba62.eastus2.azurecontainerapps.io/randonet.html`
+
+And both work.
+
+#### Confirm Idempotent Infrastructure
+```bash
+tofu plan -var image_tag=1.0.0
+```
+```console
+No changes. Your infrastructure matches the configuration.
+```
+
+#### Confirm ACR Admin is Disabled
+```bash
+az acr show \
+  --name $(tofu output -raw acr_login_server | cut -d. -f1) \
+  --resource-group deliverable-4 \
+  --query "adminUserEnabled"
+```
+```console
+false
+```
+
+#### Check Container Logs
+From the Azure Portal, inside the Log Analytics workspace (`deliverable-4` resource group → `subnets-logs` → `Logs`), we can check container logs with this query:
+```KQL
+ContainerAppConsoleLogs_CL
+| where TimeGenerated > ago(1h)
+| project TimeGenerated, ContainerName_s, Log_s
+| order by TimeGenerated desc
+| take 20
+```
+| TimeGenerated [UTC] | ContainerName_s | Log_s |
+|---|---|---|
+| 2026-03-25T04:31:06.3541242Z | subnets | 100.100.0.15 - - [25/Mar/2026:04:31:05 +0000] "GET /randonet.html HTTP/1.1" 200 2016 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" |
+
+## Task 3 - Cleanup
+We can destroy all Azure resources using:
+```bash
+tofu destroy
+```

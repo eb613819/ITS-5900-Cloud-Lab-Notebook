@@ -239,7 +239,7 @@ docker run -d -p 5001:80 --name subnets-test subnets:test
 The changes are gone. The image layers were never touched — only the container's writable layer was, and that layer is discarded when the container is removed.
 
 ### Task 1c - Inspect the Overlay Mounts Directly
-We can examine the actual filesystem paths Docker uses on the host for each later:
+We can examine the actual filesystem paths Docker uses on the host for each layer:
 ```bash
 docker inspect subnets-test --format '{{json .GraphDriver.Data}}' | python3 -m json.tool
 ```
@@ -258,7 +258,7 @@ where
 - `MergedDir` — the unified view the container sees (all layers merged)
 - `WorkDir` — OverlayFS internal scratch space used during copy-on-write
   
-Then we can stop and delete the _conatainer_ (not the image):
+Then we can stop and delete the _container_ (not the image):
 ```bash
 docker stop subnets-test && docker rm subnets-test
 ```
@@ -287,7 +287,7 @@ cp ../ITS-4900-Cloud-Release/Deliverable_4/RandoNet/ect-logo.png ../ITS-4900-Clo
 ```
 which
 - Copies `randonet.html` next to `subnets.html`
-- Copies `ect-logo.png` and `ect-logo-bottom-banner.png` into `/img`
+- Copies `ect-logo.png` and `ect-logo-bottom-banner.png` into `img/`
 
 #### Update Dockerfile
 Currently, the Dockerfile looks like this:
@@ -406,7 +406,7 @@ az login --use-device-code
 ```
 
 #### Select Location
-The code fo this deliverable includes a script that queries your subscription for available Azure regions that support Container Apps and lets you choose one. It writes your selection to `.env` and to `account.auto.tfvars` so that both shell commands and OpenTofu use the same region:
+The code for this deliverable includes a script that queries your subscription for available Azure regions that support Container Apps and lets you choose one. It writes your selection to `.env` and to `account.auto.tfvars` so that both shell commands and OpenTofu use the same region:
 ```bash
 cd ~/Cloud/ITS-4900-Cloud-Release/Deliverable_4
 bash select-location-containers.sh
@@ -457,7 +457,7 @@ cd ~/Cloud/ITS-4900-Cloud-Release/Deliverable_4
 cp project.auto.tfvars.example project.auto.tfvars
 nano project.auto.tfvars
 ```
-ACR (Azure Container Registry) is Microsoft's private Docker image store — similar to Docker Hub butcat inside your Azure subscription. The name must be globally unique across all of Azure. `acr_name` must be changed to something globally unique - I chose `ebrookssubnets`.
+ACR (Azure Container Registry) is Microsoft's private Docker image store — similar to Docker Hub but inside your Azure subscription. The name must be globally unique across all of Azure. `acr_name` must be changed to something globally unique - I chose `ebrookssubnets`.
 
 #### Initialize and Apply
 ```bash

@@ -33,7 +33,7 @@ The purpose of this deliverable is to demonstrate a modern container-based deplo
 - [Task 3 - Cleanup](#task-3---cleanup)
 - [Task 4 - Modernize the Dockerfile](#task-4---modernize-the-dockerfile)
 - [Task 5 - Reflection](#task-5---reflection)
-- 
+  
 ---
 
 ## Task 1 - Explore the Application and OverlayFS

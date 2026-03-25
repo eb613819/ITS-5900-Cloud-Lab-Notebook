@@ -14,8 +14,6 @@ The purpose of this deliverable is to demonstrate a modern container-based deplo
 ## Reference Documentation
 - [Subnets source code](https://github.com/davidc/subnets)
 - [Azure Container Apps documentation](https://learn.microsoft.com/en-us/azure/container-apps/)
-- [OpenTofu azurerm provider — Container App](https://registry.opentofu.org/providers/hashicorp/azurerm/latest/docs/resources/container_app)
-- [OpenTofu azurerm provider — Container Registry](https://registry.opentofu.org/providers/hashicorp/azurerm/latest/docs/resources/container_registry)
 - [Docker build reference](https://docs.docker.com/engine/reference/commandline/build/)
 - [Semantic Versioning](https://semver.org/)
 - [PHP Docker Hub Tags](https://hub.docker.com/_/php)

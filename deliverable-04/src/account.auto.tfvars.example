@@ -1,0 +1,9 @@
+# account.auto.tfvars.example
+# This file is an example only.  The real account.auto.tfvars is generated
+# automatically by select-location.sh — you do not need to create it by hand.
+#
+# DO NOT commit account.auto.tfvars — it contains your subscription ID.
+# The .gitignore in this repo already excludes *.auto.tfvars files.
+
+subscription_id = "00000000-0000-0000-0000-000000000000"
+location        = "eastus"

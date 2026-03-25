@@ -183,8 +183,8 @@ We can see what changed inside the container's writable layer using:
 docker diff subnets-test
 ```
 where
-- `docker diff`:
-- `subnets-test`:
+- `docker diff`: reports files that were added, modified, or deleted in a specific container's writable layer compared to the image it was started from
+- `subnets-test`: the name of the container to inspect
 
 This uses three markers:
 - `C` - file was copied up from a lower layer and modified
@@ -201,12 +201,168 @@ C /run
 C /run/apache2
 A /run/apache2/apache2.pid
 ```
-Which means
-- 
+The two meaningful changes are:
+- `subnets.html (C)` — modified by the sed command; OverlayFS copied it up from the read-only image layer before writing the change. The parent directories (`/var`, `/var/www`, `/var/www/html`) appear as `C` as well because their timestamps were updated as a side effect
+`apache2.pid (A)` — created fresh at runtime by Apache; it never existed in the image. Its parent directories (`/run`, `/run/apache2`) appear as `C` for the same metadata reason
 
 #### Check Changes to Original Image
 The original image should be unchanged. We can check by stopping and removing the container, then starting a fresh one from the same image:
 ```bash
 docker stop subnets-test && docker rm subnets-test
 docker run -d -p 5001:80 --name subnets-test subnets:test
+```
+The changes are gone. The image layers were never touched — only the container's writable layer was, and that layer is discarded when the container is removed.
+
+### Task 1c - Inspect the Overlay Mounts Directly
+We can examine the actual filesystem paths Docker uses on the host for each later:
+```bash
+docker inspect subnets-test --format '{{json .GraphDriver.Data}}' | python3 -m json.tool
+```
+```console
+{
+    "ID": "f80a08837b3367e1db588fa61e2b5b1837d8f62236c925d90ee01a18a67f20b0",
+    "LowerDir": "/var/lib/docker/overlay2/6b382765db550f8c45394e6e5cef81eaac8211092d74b9ff818c2e46083e356e-init/diff:/var/lib/docker/overlay2/ig3ladz7ne8tt9mnm5lpfzmxs/diff:/var/lib/docker/overlay2/l4ysbxfmkwclytk8lsb880gbs/diff:/var/lib/docker/overlay2/2b2f1b0b2802b7c5c1e1c5fc77eb17cb3ec7c1e8f97ef1dac2ed230eb2df20ab/diff:/var/lib/docker/overlay2/1e176fff4e232d678550cc7dcbd4044898bf96ea45b1b6073bf2a9cb90b5d5bb/diff:/var/lib/docker/overlay2/c56602102aa3a5eb11c72810da416982953c7465ee9bc6cd4fb696106eecda61/diff:/var/lib/docker/overlay2/6e739749c69225baab8f475e9b2c4bdb5ceb0ba17f0c6cf2eb5a5af3f7561bfa/diff:/var/lib/docker/overlay2/37095a6ed15078bd6885e6992f7993d93b2b60abbd5768099be716577e1ed58a/diff:/var/lib/docker/overlay2/13e8d3c0bbb7218618c2d75207fc1a70ce204631b97d4495c00d1916f9c8fe88/diff:/var/lib/docker/overlay2/09330a6171fd262e0bbba762517240dd47ab52add520678f5551ba497e478dbf/diff:/var/lib/docker/overlay2/e0ab14e5a29768784e9b9b2b09f722a849b7678058bbab455ee8572bb6b2b40b/diff:/var/lib/docker/overlay2/463222eb283459b8daa786f45263f4a456435825a262a8ebbb1f5144aed09f32/diff:/var/lib/docker/overlay2/678f70c182e6b234ac31300317b6d2e976ae333daa989ed8ddd7969027d2c2f6/diff:/var/lib/docker/overlay2/17433b9956908e20338c271596e483f1ed7cf3524081afb4db7317d1c497fe1f/diff:/var/lib/docker/overlay2/5e77c92dcf687d409dac42afbbe3a71db9d80e3cbfbd6b8d00824354ea1af4df/diff:/var/lib/docker/overlay2/c5a5ca531f911269aef2f411b8f08ba3f31c68df5c6d9b7875b541f4613a6247/diff",
+    "MergedDir": "/var/lib/docker/overlay2/6b382765db550f8c45394e6e5cef81eaac8211092d74b9ff818c2e46083e356e/merged",
+    "UpperDir": "/var/lib/docker/overlay2/6b382765db550f8c45394e6e5cef81eaac8211092d74b9ff818c2e46083e356e/diff",
+    "WorkDir": "/var/lib/docker/overlay2/6b382765db550f8c45394e6e5cef81eaac8211092d74b9ff818c2e46083e356e/work"
+}
+```
+where
+- `LowerDir` — colon-separated list of read-only image layers (bottom to top)
+- `UpperDir` — the container's writable layer (your changes land here)
+- `MergedDir` — the unified view the container sees (all layers merged)
+- `WorkDir` — OverlayFS internal scratch space used during copy-on-write
+  
+Then we can stop and delete the _conatainer_ (not the image):
+```bash
+docker stop subnets-test && docker rm subnets-test
+```
+
+### Task 1d - Extend the Image with RandoNet
+The lab directory includes a second tool: RandoNet, an IPv4 random network generator built with Ohio ECT branding. We are going to bundle it into the subnets image and carry its look and feel into `subnets.html`.
+
+The `RandoNet/` directory contains:
+- `randonet.html` — the generator page
+- `ect-logo.png` and `ect-logo-bottom-banner.png` — the ECT logo assets
+
+#### Create and Clone Fork
+We can create a fork of `https://github.com/davidc/subnets` then clone it on the gHost:
+```bash
+cd ~/Cloud
+git clone https://github.com/eb613819/subnets.git subnets-fork
+```
+**Note**: This will name the directory `subnets-fork`
+
+#### Copy RandoNet Files
+We can copy the RandoNet files from `~/Cloud/ITS-4900-Cloud-Release/Deliverable_4/RandoNet/`:
+```bash
+cd ~/Cloud/subnets-fork
+cp ../ITS-4900-Cloud-Release/Deliverable_4/RandoNet/randonet.html .
+cp ../ITS-4900-Cloud-Release/Deliverable_4/RandoNet/ect-logo.png ../ITS-4900-Cloud-Release/Deliverable_4/RandoNet/ect-logo-bottom-banner.png ./img/
+```
+which
+- Copies `randonet.html` next to `subnets.html`
+- Copies `ect-logo.png` and `ect-logo-bottom-banner.png` into `/img`
+
+#### Update Dockerfile
+Currently, the Dockerfile looks like this:
+```dockerfile
+FROM php:5.6-apache
+
+COPY index.php gennum.php subnets.html /var/www/html/
+COPY img/* /var/www/html/img/
+```
+We need to add `randonet.html` alongside `COPY` of the existing pages. The `img/*` line already covers the logos since we placed them in `img/`. Here is the new Dockerfile:
+```dockerfile
+FROM php:5.6-apache
+
+COPY index.php gennum.php subnets.html randonet.html /var/www/html/
+COPY img/* /var/www/html/img/
+```
+**Note**: Since we copied the logos to `img/` instead of level with `randonet.html`, we need to change the `src` attributes in `randonet.html`.
+
+#### Style `subnets.html` like RandoNet
+1. Change background/text color:
+   ```css
+   BODY		{
+     font-family: Arial, Verdana, sans-serif;
+     background-color: #00694E;
+     color: #FFFFFF;
+   }
+   ```
+2. Replace GitHub fork banner with logo:
+   ```html
+   <td align="right">
+   <a href="https://www.ohio.edu/mcclure"><img src="img/ect-logo.png" alt="ECT Ducky Logo" class="logo"></a>
+   </td>
+   ```
+3. Add logo banner to the bottom:
+   ```html
+   </table>
+
+   <a href="https://www.ohio.edu/mcclure"><img src="img/ect-logo-bottom-banner.png" alt="OHIO ECT Logo" class="bottom-logo"></a>
+   
+   </body>
+   ```
+4. Add styling for the logos:
+   ```css
+   /* Define a CSS class for the logo */
+   .logo {
+       float: right; /* Float the logo to the right */
+       margin-left: 10px; /* Add some margin to separate it from the content */
+   }
+   
+   /* Style for the bottom logo */
+   .bottom-logo {
+       float: left; /*position: absolute;*/
+       bottom: 500;
+       left: 0;
+       right: 0;
+       margin: 0 auto;
+       width: 500px; /* Adjust the width as needed */
+   }
+   ```
+
+#### Build and Run the Image
+We can build the image with this command:
+```bash
+docker build ~/Cloud/subnets-fork -t subnets:dev
+```
+Where
+- `~/Cloud/subnets-fork` is the build context — the modified fork directory containing the updated Dockerfile and RandoNet files
+- `-t subnets:dev:` tags the image as `subnets:dev` to distinguish it from the `:test` image
+
+We can run the image with this command:
+```bash
+docker run -d -p 5002:80 --name subnets-dev subnets:dev
+```
+Where
+- `-d`: runs the container in the background
+- `-p 5002:80`: maps port `80` inside the container to port `5002` on the host, avoiding a conflict if `subnets-test` is still running
+- `--name subnets-dev`: assigns the container a name for easy reference in later commands
+- `subnets:dev`: the image to run
+
+#### Check the Sites
+We can check that both sites are reachable, functional and look correct by navigating to:
+- `http://localhost:5002/randonet.html`
+- `http://localhost:5002/subnets.html`
+
+Both sites are correct.
+
+#### Stop and Delete the Container
+We can stop and delete the container using:
+```bash
+docker stop subnets-dev && docker rm subnets-dev
+```
+
+#### Confirm Both Images are Present
+We can check that both images are still present using:
+```bash
+docker images subnets
+```
+```console
+                                                i Info →   U  In Use
+IMAGE          ID             DISK USAGE   CONTENT SIZE   EXTRA
+subnets:dev    fb6d87c4c101        355MB             0B        
+subnets:test   5674b4a83c7f        355MB             0B        
 ```

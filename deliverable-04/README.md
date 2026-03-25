@@ -1,17 +1,44 @@
 # Deliverable 04
 ## Objective
+The purpose of this deliverable is to demonstrate a modern container-based deployment workflow using Docker, OpenTofu, and Azure Container Apps. The goal is to build and deploy a stateless open-source application end-to-end by:
+- Exploring Docker image layers and OverlayFS copy-on-write behavior
+- Extending an existing application image with additional tools and branding
+- Provisioning Azure infrastructure using OpenTofu as Infrastructure as Code
+- Building a semantically versioned container image and pushing it to a private registry
+- Deploying a live HTTPS application with automatically managed TLS and zero plaintext credentials
+- Streaming container logs into a connected Log Analytics workspace
+- Modernizing an end-of-life Dockerfile to a hardened, production-ready replacement
 
 ---
 
 ## Reference Documentation
+- [Subnets source code](https://github.com/davidc/subnets)
+- [Azure Container Apps documentation](https://learn.microsoft.com/en-us/azure/container-apps/)
+- [OpenTofu azurerm provider — Container App](https://registry.opentofu.org/providers/hashicorp/azurerm/latest/docs/resources/container_app)
+- [OpenTofu azurerm provider — Container Registry](https://registry.opentofu.org/providers/hashicorp/azurerm/latest/docs/resources/container_registry)
+- [Docker build reference](https://docs.docker.com/engine/reference/commandline/build/)
+- [Semantic Versioning](https://semver.org/)
+- [PHP Docker Hub Tags](https://hub.docker.com/_/php)
+- [OCI Image Annotation Spec](https://specs.opencontainers.org/image-spec/annotations/)
 
 ---
 
 ## Table of Contents
-
+- [Objective](#objective)
+- [Reference Documentation](#reference-documentation)
+- [Task 1 - Explore the Application and OverlayFS](#task-1---explore-the-application-and-overlayfs)
+  - [Task 1a - Build and Inspect the Image](#task-1a---build-and-inspect-the-image)
+  - [Task 1b - Copy-on-Write](#task-1b---copy-on-write)
+  - [Task 1c - Inspect the Overlay Mounts Directly](#task-1c---inspect-the-overlay-mounts-directly)
+  - [Task 1d - Extend the Image with RandoNet](#task-1d---extend-the-image-with-randonet)
+- [Task 2 - Deploy with Infrastructure as Code](#task-2---deploy-with-infrastructure-as-code)
+- [Task 3 - Cleanup](#task-3---cleanup)
+- [Task 4 - Modernize the Dockerfile](#task-4---modernize-the-dockerfile)
+- [Task 5 - Reflection](#task-5---reflection)
+- 
 ---
 
-## Task 1 - Exploe the Application and OverlayFS
+## Task 1 - Explore the Application and OverlayFS
 ### Setup Environment
 Pull the latest Cloud Release files and clone the subnets application next to the lab directory:
 ```bash
@@ -366,6 +393,7 @@ IMAGE          ID             DISK USAGE   CONTENT SIZE   EXTRA
 subnets:dev    fb6d87c4c101        355MB             0B        
 subnets:test   5674b4a83c7f        355MB             0B        
 ```
+Both images show `355MB`, meaning the RandoNet files added essentially no measurable size. This makes sense, since `randonet.html` is a small HTML file and the two logos are only a few kilobytes.
 
 ## Task 2 - Deploy with Infrastructure as Code
 ### Setup
@@ -627,7 +655,8 @@ Resource group deleted successfully.
 ## Task 4 - Modernize the Dockerfile
 The subnets app ships with a Dockerfile that works but uses PHP 5.6, which reached end-of-life in December 2018 and no longer receives security patches. We will produce a hardened, production-ready replacement.
 
-### Research
+### Update Fork 
+#### Research
 Before writing the new Dockerfile, we need to choose a base image by going to the [tags page](https://hub.docker.com/_/php/tags) and answering the following questions:
 - **What is the current stable PHP version?** PHP 8.5 is the current stable version.
 - **What variants are available, and which does this application need?** The available variants are:
@@ -637,3 +666,132 @@ Before writing the new Dockerfile, we need to choose a base image by going to th
  - `-alpine` — a minimal Alpine Linux base, available for most of the above
 This application needs `-apache` because the original Dockerfile uses it and the app relies on Apache to serve PHP files directly — there is no separate web server configured.
 - **What is the difference between `php:8.5-apache` and `php:8-apache`?** `php:8.5-apache` pins to a specific minor version, so the image only updates with patch releases (8.5.x). `php:8-apache` always resolves to the latest 8.x minor release, meaning a rebuild could pull 8.6 or later without warning and potentially introduce breaking changes. For a production image `php:8.5-apache` is more appropriate because it gives security patches while keeping the runtime version predictable.
+
+#### Updated Dockerfile
+```dockerfile
+FROM php:8.5-apache
+
+LABEL org.opencontainers.image.source="https://github.com/eb613819/subnets"
+LABEL org.opencontainers.image.description="Visual Subnet Calculator and RandoNet bundled with ECT branding"
+LABEL org.opencontainers.image.version="2.0.0"
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost/ || exit 1
+
+COPY index.php gennum.php subnets.html randonet.html /var/www/html/
+COPY img/* /var/www/html/img/
+```
+
+#### `.dockerignore`
+```
+.git
+*.md
+*.sh
+```
+
+### Build and Test
+#### Build
+```bash
+docker build ~/Cloud/subnets-fork -t subnets:v2
+```
+```console
+build ~/Cloud/subnets-fork -t subnets:v2
+[+] Building 10.1s (8/8) FINISHED                    docker:default
+ => [internal] load build definition from Dockerfile           0.0s
+ => => transferring dockerfile: 507B                           0.0s
+ => [internal] load metadata for docker.io/library/php:8.5-ap  0.6s
+ => [internal] load .dockerignore                              0.0s
+ => => transferring context: 55B                               0.0s
+ => [1/3] FROM docker.io/library/php:8.5-apache@sha256:e55a9f  8.1s
+ => => resolve docker.io/library/php:8.5-apache@sha256:e55a9f  0.0s
+ => => sha256:e55a9f8e4caa09c6a31ec752b3076 10.34kB / 10.34kB  0.0s
+ => => sha256:1dd904f46639b4f343de14d1c89743e 3.63kB / 3.63kB  0.0s
+ => => sha256:ec781dee3f4719c2ca0dd9e73cb1d 29.78MB / 29.78MB  1.0s
+ => => sha256:81fb1bfad0b3a31590d5e1f45ef 117.84MB / 117.84MB  3.2s
+ => => sha256:c77939e39814e942f95188314de7f 11.60kB / 11.60kB  0.0s
+ => => sha256:0b8bbe5e71e1a3e47e441ca86adf899da13 225B / 225B  0.2s
+ => => sha256:7660bba312d9922fc7efa8734e55f4aeb08 225B / 225B  0.3s
+ => => sha256:a329f51c60be5f3dc24ca9b10fba835 4.23MB / 4.23MB  0.7s
+ => => sha256:42878a26b2a89a024880bf35fc5e9736a95 429B / 429B  0.8s
+ => => sha256:69be67c990f8a682441ed28cf893ea55f8c 487B / 487B  0.9s
+ => => sha256:8d89608c973dad6285c0ec6870a18 14.52MB / 14.52MB  1.5s
+ => => extracting sha256:ec781dee3f4719c2ca0dd9e73cb1d4ed834e  1.3s
+ => => sha256:5551960b4d45745155016cd1be35c21e0ad 489B / 489B  1.2s
+ => => sha256:b70e08d698001c1ab8dd08be7da75 15.00MB / 15.00MB  2.0s
+ => => sha256:42f8155a24a407d5c5de1b4abee8180 2.46kB / 2.46kB  1.6s
+ => => sha256:36d2823c6399e5d8f1e2565fc188c3a45bf 246B / 246B  1.7s
+ => => sha256:9c6db6cf7eb2bad663880b02b2a765255d1 891B / 891B  1.8s
+ => => sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0c 32B / 32B  2.1s
+ => => extracting sha256:0b8bbe5e71e1a3e47e441ca86adf899da136  0.0s
+ => => extracting sha256:81fb1bfad0b3a31590d5e1f45efc41bdadb8  3.3s
+ => => extracting sha256:7660bba312d9922fc7efa8734e55f4aeb08c  0.0s
+ => => extracting sha256:a329f51c60be5f3dc24ca9b10fba835d198a  0.2s
+ => => extracting sha256:42878a26b2a89a024880bf35fc5e9736a957  0.0s
+ => => extracting sha256:69be67c990f8a682441ed28cf893ea55f8c9  0.0s
+ => => extracting sha256:8d89608c973dad6285c0ec6870a183508897  0.1s
+ => => extracting sha256:5551960b4d45745155016cd1be35c21e0ad6  0.0s
+ => => extracting sha256:b70e08d698001c1ab8dd08be7da7520c3540  0.5s
+ => => extracting sha256:42f8155a24a407d5c5de1b4abee81807d0d7  0.0s
+ => => extracting sha256:36d2823c6399e5d8f1e2565fc188c3a45bfb  0.0s
+ => => extracting sha256:9c6db6cf7eb2bad663880b02b2a765255d1e  0.0s
+ => => extracting sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0  0.0s
+ => [internal] load build context                              0.0s
+ => => transferring context: 1.22kB                            0.0s
+ => [2/3] COPY index.php gennum.php subnets.html randonet.htm  1.0s
+ => [3/3] COPY img/* /var/www/html/img/                        0.1s
+ => exporting to image                                         0.1s
+ => => exporting layers                                        0.1s
+ => => writing image sha256:74dbfab4303a95f54567b9264a65f2e07  0.0s
+ => => naming to docker.io/library/subnets:v2                  0.0s
+```
+
+#### Run
+```bash
+docker run -d -p 5002:80 --name subnets-v2 subnets:v2
+```
+
+#### Test
+We can test the application by going to `http://localhost:5002`:
+- `http://localhost:5002/subnets.html`
+- `http://localhost:5002/randonet.html`
+
+Both pages work.
+
+#### Stop the Container
+```bash
+docker stop subnets-v2 && docker rm subnets-v2
+```
+
+#### Inspect Labels
+```bash
+docker inspect subnets:v2 --format '{{json .Config.Labels}}' | python3 -m json.tool
+```
+```console
+{
+    "org.opencontainers.image.description": "Visual Subnet Calculator and RandoNet bundled with ECT branding",
+    "org.opencontainers.image.source": "https://github.com/eb613819/subnets",
+    "org.opencontainers.image.version": "2.0.0"
+}
+```
+
+### Written Response — Risks of an End-of-Life Base Image
+**Security vulnerabilities** — PHP 5.6 no longer receives CVE patches. Any vulnerability discovered after its EOL date in December 2018 remains permanently unpatched in that image. An attacker who finds a PHP or Apache exploit has a guaranteed path in with no fix ever coming.
+
+**Dependency and compliance risk** — EOL software is typically flagged by vulnerability scanners and will fail security audits. Many organizations and cloud providers have policies that block deployment of images with known critical CVEs, meaning the app could be blocked from production entirely regardless of whether it actually gets exploited.
+
+## Task 5 - Reflection
+**1. The Container App pulled images from ACR without any stored username or password. What Azure feature makes this possible, and why is it preferable to storing credentials?**
+This is made possible by Azure Managed Identity. The Container App is assigned an identity by Azure, and ACR is configured to trust that identity via Role-Based Access Control (RBAC). When the app pulls an image, Azure handles authentication automatically using that identity and no username or password is ever stored anywhere.
+This is preferable to stored credentials because credentials can be leaked, forgotten, or left unchanged for years. A managed identity has no secret to steal. If the Container App is deleted, the identity goes with it and access is automatically revoked.
+
+**2. TLS certificates have a fixed expiry date and must be renewed periodically. Explain how Azure Container Apps handles certificate renewal and why this matters for a service that needs to stay available long-term.**
+Azure Container Apps automatically provisions and renews TLS certificates using a managed certificate service. When the app is deployed with a custom domain or uses the default `azurecontainerapps.io` URL, Azure handles the full certificate lifecycle (issuance, monitoring expiry, and renewal) without any manual intervention.
+This matters for long-term availability because an expired certificate causes browsers to block the site with a security warning, effectively taking it offline for most users. Manual certificate management is easy to forget and automated renewal eliminates that operational risk entirely.
+
+**3. This application has no database and no persistent storage. What would change about this deployment if the application needed to store user data?**
+When a container restarts, its writable layer is discarded and replaced with a fresh one from the image. Any data written to the container's filesystem during its lifetime (user records, uploaded files, session state) is permanently lost. For a stateless app like subnets this is fine since nothing important lives in the writable layer.
+If the app needed to store user data, the deployment would need persistent storage that lives outside the container. This could be an Azure Storage Account or a database like Azure Database for PostgreSQL. The container would read and write to that external service instead of its local filesystem so data survives container restarts, scaling events, and redeployments.
+
+**4. If this deployment had been built manually through the Azure Portal with no IaC and no documentation, what challenges would a new engineer face six months from now?**
+Without IaC, there is no authoritative record of what was built or why. A new engineer would have to reverse-engineer the deployment by clicking through the Azure Portal, trying to reconstruct which settings were chosen, which identity was assigned, and how the networking was configured. Any undocumented manual step (a specific RBAC role, a security rule, an environment variable) would be invisible until something broke.
+Recovery would be difficult. If the resource group were accidentally deleted, rebuilding it would require a lot of guessing. With OpenTofu, the same infrastructure can be recreated exactly with `tofu apply`. Without it, there is no guarantee the rebuilt environment matches the original.

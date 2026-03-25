@@ -609,3 +609,31 @@ We can destroy all Azure resources using:
 ```bash
 tofu destroy
 ```
+```console
+Destroy complete! Resources: 7 destroyed.
+```
+Then we can verify the resources are gone:
+```bash
+az group show --name deliverable-4 2>&1 | grep -i "could not be found\|ResourceGroupNotFound" \
+  && echo "Resource group deleted successfully."
+```
+```console
+ERROR: (ResourceGroupNotFound) Resource group 'deliverable-4' could not be found.
+Code: ResourceGroupNotFound
+Message: Resource group 'deliverable-4' could not be found.
+Resource group deleted successfully.
+```
+
+## Task 4 - Modernize the Dockerfile
+The subnets app ships with a Dockerfile that works but uses PHP 5.6, which reached end-of-life in December 2018 and no longer receives security patches. We will produce a hardened, production-ready replacement.
+
+### Research
+Before writing the new Dockerfile, we need to choose a base image by going to the [tags page](https://hub.docker.com/_/php/tags) and answering the following questions:
+- **What is the current stable PHP version?** PHP 8.5 is the current stable version.
+- **What variants are available, and which does this application need?** The available variants are:
+ - `-apache` — bundles PHP with the Apache web server
+ - `-fpm` — PHP FastCGI Process Manager, used with a separate web server like NGINX
+ - `-cli` — command-line only, no web server
+ - `-alpine` — a minimal Alpine Linux base, available for most of the above
+This application needs `-apache` because the original Dockerfile uses it and the app relies on Apache to serve PHP files directly — there is no separate web server configured.
+- **What is the difference between `php:8.5-apache` and `php:8-apache`?** `php:8.5-apache` pins to a specific minor version, so the image only updates with patch releases (8.5.x). `php:8-apache` always resolves to the latest 8.x minor release, meaning a rebuild could pull 8.6 or later without warning and potentially introduce breaking changes. For a production image `php:8.5-apache` is more appropriate because it gives security patches while keeping the runtime version predictable.

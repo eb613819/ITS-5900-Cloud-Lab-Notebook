@@ -24,18 +24,19 @@ ITS-5900-Cloud-Lab-Notebook/
 │   │   └── README.md
 │   │
 │   └── deliverable-02B/
-│       ├── README.md
-│       └── /src
+│       ├── /src
+│       └── README.md
 │
 ├── deliverable-03/
 │   ├── deliverable-03A/
 │   │   └── README.md
 │   │
 │   └── deliverable-03B/
-|       ├── README.md
-|       └── /src
+|       ├── /src
+|       └── README.md
 │
 ├── deliverable-04/
+│   ├── /src
 │   └── README.md
 │
 └── .gitignore
